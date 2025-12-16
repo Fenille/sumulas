@@ -633,11 +633,6 @@ async function enviarCabecalho(){
 
     await rtdbPut(`indexPorRE/${encodeURIComponent(re)}/${id}`, true);
 
-        // Cadastro do RE (para próximas vezes)
-        if(!cad?.nome){
-          try{ await salvarCadastroRE(re, payload.aluno1.nome, payload.aluno1.postoGrad, payload.unidade); }catch(e){}
-        }
-
 
     $("alunoMsg").textContent = `✅ Enviado! ID: ${id}`;
     // limpa (mantém RE)
@@ -663,7 +658,7 @@ async function consultarRE(){
       .sort((a,b)=> (b.criadoEm||"").localeCompare(a.criadoEm||""));
 
     $("consultaList").innerHTML="";
-    for(const it of viewItems){
+    for(const it of items){
       const nome = it.aluno1?.nome || "(sem nome)";
       const tipo = it.tipo || "-";
       const data = it.data || "-";
@@ -713,7 +708,7 @@ async function loadInstrList(){
     $("kpiFinal").textContent=`Finalizados: ${fin}`;
 
     $("instrList").innerHTML="";
-    for(const it of viewItems){
+    for(const it of items){
       const nome=it.aluno1?.nome||"(sem nome)";
       const re=it.aluno1?.re||"-";
       const tipo=it.tipo||"-";
@@ -730,11 +725,14 @@ async function loadInstrList(){
         </div>
         <div class="right">
           <span class="pill">E: ${E}</span>
-          <button class="tiny">Abrir</button>
+          <button class="tiny" data-id="${it.id}">Abrir</button>
+          <button class="tiny danger" data-del="${it.id}">Excluir</button>
         </div>
       `;
-      div.querySelector("button[data-id]").addEventListener("click", ()=> openEditor(it.id, it));
-          div.querySelector("button[data-del]").addEventListener("click", ()=> excluirAvaliacao(it.id, it));
+      const btnOpen = div.querySelector("button[data-id]");
+      if(btnOpen) btnOpen.addEventListener("click", ()=> openEditor(it.id, it));
+      const btnDel = div.querySelector("button[data-del]");
+      if(btnDel) btnDel.addEventListener("click", ()=> excluirAvaliacao(it.id, it));
       $("instrList").appendChild(div);
     }
   }catch(e){
