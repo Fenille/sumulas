@@ -40,8 +40,25 @@ h1{margin:0;font-size:18px;letter-spacing:.6px}
 input,select,textarea{width:100%;border-radius:12px;border:1px solid rgba(255,255,0,.22);
   background:rgba(0,0,0,.35);color:var(--y);padding:10px 12px;outline:none;
 }
+    input,select,textarea{-webkit-text-fill-color:var(--y);}
+    select{
+      appearance:none;-webkit-appearance:none;-moz-appearance:none;
+      background-color:rgba(0,0,0,.35);
+      padding-right:34px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--y) 50%),
+        linear-gradient(135deg, var(--y) 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) calc(50% - 4px),
+        calc(100% - 12px) calc(50% - 4px);
+      background-size:6px 6px, 6px 6px;
+      background-repeat:no-repeat;
+    }
+    select:focus{outline:2px solid rgba(255,255,0,.28);}
+    option{color:#000;background:#fff;}
+
 textarea{min-height:86px;resize:vertical}
-select{font-size:14px;line-height:1.2}
+select{font-size:14px;line-height:1.2;}
 select option{color:#111;background:#fff} /* garante leitura após selecionar */
 .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
 button{border:0;border-radius:14px;padding:10px 14px;font-weight:900;cursor:pointer;
@@ -256,6 +273,19 @@ button.danger{background:rgba(255,60,60,.14);border-color:rgba(255,60,60,.35);co
           <span class="pill" id="kpiFinal">Finalizados: 0</span>
         </div>
 
+        <div class="sep"></div>
+        <div class="row">
+          <div class="field" style="grid-column:span 12">
+            <label>Filtros e ações</label>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <label class="pill" style="cursor:pointer">
+                <input id="hideFinalizados" type="checkbox" checked style="width:auto;margin:0 6px 0 0"> Ocultar finalizados
+              </label>
+              <button id="btnLimparFinalizados" class="tiny">Retirar finalizados da tela</button>
+              <button id="btnRecarregar" class="tiny">Recarregar</button>
+            </div>
+          </div>
+        </div>
         <div class="sep"></div>
         <div class="list" id="instrList"></div>
 
@@ -551,6 +581,13 @@ async function enviarCabecalho(){
   if(!rule) return alert("Tipo inválido.");
 
   const re = safe($("aRE").value) || session.re;
+  // Se RE já tiver cadastro, força dados
+  const cad = await getCadastroRE(re);
+  if(cad?.nome){
+    $("aNome").value = cad.nome;
+    $("aPG").value = cad.postoGrad || $("aPG").value;
+  }
+
   const payload={
     tipo,
     data: $("data").value || "",
@@ -596,6 +633,12 @@ async function enviarCabecalho(){
 
     await rtdbPut(`indexPorRE/${encodeURIComponent(re)}/${id}`, true);
 
+        // Cadastro do RE (para próximas vezes)
+        if(!cad?.nome){
+          try{ await salvarCadastroRE(re, payload.aluno1.nome, payload.aluno1.postoGrad, payload.unidade); }catch(e){}
+        }
+
+
     $("alunoMsg").textContent = `✅ Enviado! ID: ${id}`;
     // limpa (mantém RE)
     $("aArma").value=""; $("obsAluno").value="";
@@ -620,7 +663,7 @@ async function consultarRE(){
       .sort((a,b)=> (b.criadoEm||"").localeCompare(a.criadoEm||""));
 
     $("consultaList").innerHTML="";
-    for(const it of items){
+    for(const it of viewItems){
       const nome = it.aluno1?.nome || "(sem nome)";
       const tipo = it.tipo || "-";
       const data = it.data || "-";
@@ -662,12 +705,15 @@ async function loadInstrList(){
 
     let total=items.length, aguard=0, fin=0;
     for(const it of items){ if(it.status==="AGUARDANDO_INSTRUTOR") aguard++; if(it.status==="FINALIZADO") fin++; }
+
+    const hide = $("hideFinalizados") ? $("hideFinalizados").checked : true;
+    const viewItems = hide ? items.filter(x=>x.status!=="FINALIZADO") : items;
     $("kpiTotal").textContent=`Total: ${total}`;
     $("kpiAguard").textContent=`Aguardando: ${aguard}`;
     $("kpiFinal").textContent=`Finalizados: ${fin}`;
 
     $("instrList").innerHTML="";
-    for(const it of items){
+    for(const it of viewItems){
       const nome=it.aluno1?.nome||"(sem nome)";
       const re=it.aluno1?.re||"-";
       const tipo=it.tipo||"-";
@@ -687,7 +733,8 @@ async function loadInstrList(){
           <button class="tiny">Abrir</button>
         </div>
       `;
-      div.querySelector("button").addEventListener("click", ()=> openEditor(it.id, it));
+      div.querySelector("button[data-id]").addEventListener("click", ()=> openEditor(it.id, it));
+          div.querySelector("button[data-del]").addEventListener("click", ()=> excluirAvaliacao(it.id, it));
       $("instrList").appendChild(div);
     }
   }catch(e){
@@ -1045,6 +1092,11 @@ window.addEventListener("DOMContentLoaded", ()=>{
   $("btnDemoInstr").addEventListener("click", ()=>{ $("loginUser").value="Fenille"; $("loginPass").value="140965"; });
 
   $("btnConsultar").addEventListener("click", consultarRE);
+
+      // auto-preencher dados do aluno pelo RE
+      $("aRE").addEventListener("blur", onAlunoRE);
+      $("aRE").addEventListener("change", onAlunoRE);
+
 
   $("tabAluno").addEventListener("click", openAluno);
   $("tabInstr").addEventListener("click", openInstr);
