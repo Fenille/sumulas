@@ -120,7 +120,31 @@ button.danger{background:rgba(255,60,60,.14);border-color:rgba(255,60,60,.35);co
   .btns{gap:8px}
   .row{gap:8px}
 }
-</style>
+    /* FIX: texto do select visível no Chrome mobile/dark */
+    .shotCell select{
+      color: var(--y) !important;
+      -webkit-text-fill-color: var(--y) !important;
+      background: rgba(0,0,0,.55) !important;
+      font-weight: 900;
+      text-align: center;
+    }
+    .shotCell select option{
+      background: #0b0b10;
+      color: #ffff00;
+    }
+    .shotVal{
+      margin-top: 6px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,0,.18);
+      background: rgba(0,0,0,.35);
+      text-align: center;
+      font-weight: 900;
+      color: var(--yn);
+      letter-spacing: .5px;
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body>
 <div class="wrap">
@@ -825,28 +849,45 @@ function closeEditor(){
 }
 
 function buildShots(rule){
-  const grid = $("shotsGrid");
-  grid.innerHTML = "";
-  for(let i=0;i<rule.shots;i++){ 
-    const cell = document.createElement("div");
-    cell.className = "shotCell";
-    const lab = document.createElement("label");
-    lab.textContent = `Tiro ${i+1}`;
-    const sel = document.createElement("select");
-    for(const v of rule.shotOptions){
-      const op = document.createElement("option");
-      op.value = String(v);
-      op.textContent = String(v);
-      sel.appendChild(op);
-    }
-    sel.value = String(currentObj.correcao.tiros[i] ?? 0);
-    sel.addEventListener("change", ()=>{ currentObj.correcao.tiros[i] = Number(sel.value); recomputeAll(); });
-    cell.appendChild(lab); cell.appendChild(sel);
-    grid.appendChild(cell);
-  }
-}
+      const grid = $("shotsGrid");
+      grid.innerHTML = "";
 
-function buildProcedures(rule){
+      for(let i=0;i<rule.shots;i++){
+        const cell = document.createElement("div");
+        cell.className = "shotCell";
+
+        const lab = document.createElement("label");
+        lab.textContent = `Tiro ${i+1}`;
+
+        const sel = document.createElement("select");
+        for(const v of rule.shotOptions){
+          const op = document.createElement("option");
+          op.value = String(v);
+          op.textContent = String(v);
+          sel.appendChild(op);
+        }
+
+        sel.value = String(currentObj.correcao.tiros[i] ?? 0);
+
+        // VISOR (garante visualização do valor selecionado)
+        const visor = document.createElement("div");
+        visor.className = "shotVal";
+        visor.textContent = sel.value;
+
+        sel.addEventListener("change", ()=>{
+          currentObj.correcao.tiros[i] = Number(sel.value);
+          visor.textContent = sel.value;
+          recomputeAll();
+        });
+
+        cell.appendChild(lab);
+        cell.appendChild(sel);
+        cell.appendChild(visor);
+        grid.appendChild(cell);
+      }
+    }
+
+    function buildProcedures(rule){
   const box = $("procList");
   box.innerHTML = "";
   for(let i=0;i<rule.procCount;i++){ 
