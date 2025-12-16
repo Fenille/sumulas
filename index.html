@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RITE • Súmulas de Tiro</title>
+<style>
+:root{
+  --y:#ffff00; --yn:#f9ff7a;
+  --bg:#000; --bg2:#050509;
+  --card:rgba(10,10,15,.96);
+  --bd:rgba(255,255,0,.18);
+  --mut:#cfcfcf;
+  --sh:0 14px 40px rgba(0,0,0,.85);
+  --r:18px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--y);
+  background:radial-gradient(circle at top,#202020 0,var(--bg2) 52%,var(--bg) 100%);
+}
+.wrap{max-width:1200px;margin:0 auto;padding:16px}
+.top{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:14px 16px;border:1px solid var(--bd);border-radius:18px;
+  background:linear-gradient(180deg,rgba(10,10,15,.96),rgba(5,5,9,.92));
+  box-shadow:var(--sh);
+}
+h1{margin:0;font-size:18px;letter-spacing:.6px}
+.sub{color:var(--mut);font-size:12px;margin-top:4px;line-height:1.35}
+.badge{
+  padding:8px 10px;border-radius:999px;font-weight:900;font-size:12px;white-space:nowrap;
+  background:rgba(255,255,0,.16);color:var(--y);border:1px solid rgba(255,255,0,.25)
+}
+.badge.ok{background:var(--y);color:#0b0b10;border:1px solid rgba(0,0,0,.2)}
+.grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+@media(min-width:920px){.grid{grid-template-columns:420px 1fr}}
+.card{
+  background:var(--card);
+  border:1px solid var(--bd);
+  border-radius:18px;
+  box-shadow:var(--sh);
+  padding:14px;
+}
+.pill{
+  display:inline-flex;gap:8px;align-items:center;
+  padding:6px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,0,.22);
+  background:rgba(0,0,0,.25);
+  font-size:12px;color:var(--mut);
+}
+.sep{height:1px;background:rgba(255,255,0,.14);margin:12px 0}
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+.field{grid-column:span 12;display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--mut)}
+input,select,textarea{
+  width:100%; border-radius:12px;
+  border:1px solid rgba(255,255,0,.22);
+  background:rgba(0,0,0,.35);
+  color:var(--y);
+  padding:10px 12px; outline:none;
+}
+textarea{min-height:86px;resize:vertical}
+    select{ -webkit-text-fill-color: var(--y); color:var(--y); }
+    select option{ color:#000; background:#fffaa0; }
+    .shotCell select{ background:rgba(0,0,0,.35); color:var(--y); -webkit-text-fill-color: var(--y); }
+
+
+/* SELECT VISÍVEL (mobile/chrome) */
+select{
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  background-color:rgba(0,0,0,.40);
+  color:var(--y);
+  background-image:linear-gradient(45deg,transparent 50%, var(--y) 50%),linear-gradient(135deg,var(--y) 50%, transparent 50%);
+  background-position:calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+  background-size:6px 6px,6px 6px;
+  background-repeat:no-repeat;
+  padding-right:34px;
+}
+select option{background:#0b0b10;color:var(--y)}
+select:focus{box-shadow:0 0 0 2px rgba(255,255,0,.14)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+button{
+  border:0;border-radius:14px;padding:10px 14px;
+  font-weight:900;cursor:pointer;
+  background:rgba(255,255,0,.14);color:var(--y);
+  border:1px solid rgba(255,255,0,.28);
+}
+button.primary{background:var(--y);color:#0b0b10;border:1px solid rgba(0,0,0,.2)}
+button.danger{background:rgba(255,60,60,.14);border-color:rgba(255,60,60,.35);color:#ffd3d3}
+.muted{color:var(--mut);font-size:12px}
+.list{display:grid;gap:10px}
+.item{
+  padding:12px;border-radius:16px;
+  border:1px solid rgba(255,255,0,.18);
+  background:rgba(0,0,0,.25);
+  display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+}
+.item b{color:var(--y)}
+.right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.kpi{display:flex;gap:10px;flex-wrap:wrap}
+.kpi .pill{color:var(--yn)}
+.tabs{display:flex;gap:10px;flex-wrap:wrap}
+.shotsGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media(min-width:920px){.shotsGrid{grid-template-columns:repeat(10,minmax(0,1fr));}}
+.shotCell{
+  border:1px solid rgba(255,255,0,.18);
+  background:rgba(0,0,0,.25);
+  border-radius:12px;
+  padding:8px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.shotCell label{font-size:11px;color:var(--mut)}
+.shotCell select{padding:8px 10px;border-radius:10px}
+.checks{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:920px){.checks{grid-template-columns:1fr 1fr}}
+.checkItem{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:10px 12px;border-radius:14px;
+  border:1px solid rgba(255,255,0,.16);
+  background:rgba(0,0,0,.22);
+}
+.checkItem input{width:auto;margin-top:3px}
+.checkItem .txt{display:flex;flex-direction:column;gap:4px}
+.checkItem .txt b{font-size:13px}
+.checkItem .txt small{color:var(--mut);font-size:12px;line-height:1.25}
+.imgPrev{max-width:360px;width:100%;border-radius:14px;border:1px solid rgba(255,255,0,.22);background:rgba(0,0,0,.25);padding:10px}
+.tiny{padding:7px 10px;border-radius:12px;font-size:12px}
+.lock{opacity:.75}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>RITE • Súmulas de Tiro</h1>
+      <div class="sub">Mobile-first • Aluno: só cabeçalho (RE puxa cadastro) • Instrutor: tiros 1 a 1 + procedimentos + penalidades + reprovação • Nota 0–10 (3 casas) • Consulta por RE (dossiê) • Súmula no padrão (2 páginas A4)</div>
+    </div>
+    <div id="badge" class="badge">OFFLINE</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="pill">🔐 Login</div><div class="sep"></div>
+      <div class="row">
+        <div class="field">
+          <label>Usuário (RE do aluno OU Fenille)</label>
+          <input id="loginUser" placeholder="Ex.: 123456-7 ou Fenille">
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input id="loginPass" type="password" placeholder="Senha">
+        </div>
+      </div>
+      <div class="btns">
+        <button class="primary" id="btnLogin">Entrar</button>
+        <button id="btnDemoAluno">Demo Aluno</button>
+        <button id="btnDemoInstr">Demo Instrutor</button>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="pill">🔎 Consulta por RE (Dossiê)</div>
+      <div class="muted" style="margin-top:8px">Mostra todas as avaliações do RE e permite abrir o dossiê e imprimir a súmula.</div>
+      <div class="row" style="margin-top:10px">
+        <div class="field" style="grid-column:span 8">
+          <label>RE</label>
+          <input id="consultaRE" placeholder="Ex.: 123456-7">
+        </div>
+        <div class="field" style="grid-column:span 4;align-self:end">
+          <button class="primary" id="btnConsultar">Consultar</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="list" id="consultaList"></div>
+
+      <div class="sep"></div>
+      <div class="muted">
+        Aluno: senha padrão <b>1234</b><br>
+        Instrutor: <b>Fenille</b> / <b>140965</b>
+      </div>
+    </div>
+
+    <div class="card" id="appCard" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <div>
+          <div class="pill" id="whoPill">👤</div>
+          <div class="muted" id="whoSub"></div>
+        </div>
+        <div class="tabs">
+          <button id="tabAluno" style="display:none;">Tela do Aluno</button>
+          <button id="tabInstr" style="display:none;">Painel do Instrutor</button>
+          <button id="tabSig" style="display:none;">Assinatura</button>
+          <button class="danger" id="btnLogout">Sair</button>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div id="viewAluno" style="display:none;">
+        <div class="pill">📝 Cabeçalho (Aluno)</div>
+        <div class="muted" style="margin-top:8px">Digite o RE → o sistema puxa os dados cadastrados e bloqueia alteração do nome. Se não existir, cadastra no primeiro envio.</div>
+        <div class="sep"></div>
+
+        <div class="row">
+          <div class="field" style="grid-column:span 6">
+            <label>Tipo</label>
+            <select id="tipo">
+              <option value="PPA_PISTOLA">PPA • Pistola .40</option>
+              <option value="PPA_ESP12">PPA • Espingarda 12</option>
+            </select>
+          </div>
+          <div class="field" style="grid-column:span 6">
+            <label>Data</label>
+            <input id="data" type="date">
+          </div>
+
+          <div class="field" style="grid-column:span 6">
+            <label>Local</label>
+            <input id="local" placeholder="Estande / Localidade">
+          </div>
+          <div class="field" style="grid-column:span 6">
+            <label>Unidade</label>
+            <input id="unidade" placeholder="18º BPM/I">
+          </div>
+
+          <div class="field" style="grid-column:span 4">
+            <label>RE</label>
+            <input id="aRE" placeholder="RE" inputmode="numeric">
+            <div class="muted" id="reHint"></div>
+          </div>
+          <div class="field" style="grid-column:span 8">
+            <label>Nome</label>
+            <input id="aNome" placeholder="Nome completo">
+          </div>
+
+          <div class="field" style="grid-column:span 6">
+            <label>Posto/Grad</label>
+            <input id="aPG" placeholder="Sd PM">
+          </div>
+          <div class="field" style="grid-column:span 6">
+            <label>Nº da arma</label>
+            <input id="aArma" placeholder="12345">
+          </div>
+
+          <div class="field">
+            <label>Observações (opcional)</label>
+            <textarea id="obsAluno" placeholder="..."></textarea>
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="primary" id="btnEnviar">Enviar para o instrutor</button>
+        </div>
+
+        <div class="sep"></div>
+        <div class="muted" id="alunoMsg"></div>
+      </div>
+
+      <div id="viewInstr" style="display:none;">
+        <div class="pill">🧑‍🏫 Painel do Instrutor</div>
+        <div class="muted" style="margin-top:8px">Carrega as últimas 80 avaliações (leve).</div>
+
+        <div class="sep"></div>
+        <div class="kpi">
+          <span class="pill" id="kpiTotal">Total: 0</span>
+          <span class="pill" id="kpiAguard">Aguardando: 0</span>
+          <span class="pill" id="kpiFinal">Finalizados: 0</span>
+        </div>
+
+        <div class="sep"></div>
+        <div class="list" id="instrList"></div>
+
+        <div class="sep"></div>
+
+        <div id="editor" style="display:none;">
+          <div class="pill">✍️ Correção</div>
+          <div class="muted" id="edHeader" style="margin-top:8px"></div>
+
+          <div class="sep"></div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div class="pill">① Tiros (1 por 1)</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="tiny" id="btnZerarTiros">Zerar</button>
+              <button class="tiny" id="btnMaxTiros">Máximo</button>
+            </div>
+          </div>
+          <div class="muted" id="shotsHelp" style="margin:8px 0 10px 0"></div>
+          <div class="shotsGrid" id="shotsGrid"></div>
+
+          <div class="sep"></div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div class="pill">② Procedimentos (25)</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="tiny" id="btnAllProcOK">Todos corretos</button>
+              <button class="tiny" id="btnAllProcErr">Todos errados</button>
+            </div>
+          </div>
+          <div class="muted" style="margin:8px 0 10px 0">Padrão: todos corretos. Desmarque o que estiver errado (perde 10 pontos).</div>
+          <div class="checks" id="procList"></div>
+
+          <div class="sep"></div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div class="pill">③ Penalidades</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="tiny" id="btnClearPen">Limpar</button>
+            </div>
+          </div>
+          <div class="muted" style="margin:8px 0 10px 0">Padrão: nenhuma marcada (−10 pts cada).</div>
+          <div class="checks" id="penList"></div>
+
+          <div class="sep"></div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+            <div class="pill">④ Reprovação (penalidades fatais)</div>
+            <div class="muted">Se marcar qualquer item → REPROVADO (independente da nota).</div>
+          </div>
+          <div class="checks" id="repList" style="margin-top:10px"></div>
+
+          <div class="sep"></div>
+
+          <div class="pill">📌 Resultado automático</div>
+          <div class="row" style="margin-top:10px">
+            <div class="field" style="grid-column:span 3">
+              <label>A (Tiros)</label>
+              <input id="pA" disabled />
+            </div>
+            <div class="field" style="grid-column:span 3">
+              <label>B (Proced.)</label>
+              <input id="pB" disabled />
+            </div>
+            <div class="field" style="grid-column:span 3">
+              <label>C (Penal.)</label>
+              <input id="pC" disabled />
+            </div>
+            <div class="field" style="grid-column:span 3">
+              <label>E = A + B − C</label>
+              <input id="pE" disabled />
+            </div>
+            <div class="field" style="grid-column:span 4">
+              <label>Nota (0–10)</label>
+              <input id="nota10" disabled />
+            </div>
+            <div class="field" style="grid-column:span 4">
+              <label>Conceito</label>
+              <input id="conceito" disabled />
+            </div>
+            <div class="field" style="grid-column:span 4">
+              <label>Status</label>
+              <input id="statusShow" disabled />
+            </div>
+
+            <div class="field">
+              <label>Observações do instrutor</label>
+              <textarea id="obsInstr" placeholder="..."></textarea>
+            </div>
+          </div>
+
+          <div class="btns">
+            <button class="primary" id="btnSalvar">Salvar</button>
+            <button id="btnValidar">VALIDAR</button>
+            <button id="btnImprimir">Gerar/Imprimir Súmula</button>
+            <button id="btnFecharEditor">Fechar</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="viewSig" style="display:none;">
+        <div class="pill">🖊️ Assinatura do Instrutor</div>
+        <div class="muted" style="margin-top:8px">Upload PNG/JPG → salva em <b>config/instrutores/Fenille/assinatura</b></div>
+        <div class="sep"></div>
+
+        <div class="row">
+          <div class="field" style="grid-column:span 6">
+            <label>Arquivo (PNG/JPG)</label>
+            <input id="sigFile" type="file" accept="image/png,image/jpeg"/>
+          </div>
+          <div class="field" style="grid-column:span 6">
+            <label>Nome exibido</label>
+            <input id="sigNome" placeholder="CAP PM 140965-4 FENILLE"/>
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="primary" id="btnSalvarSig">Salvar assinatura</button>
+          <button class="danger" id="btnApagarSig">Apagar assinatura</button>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row">
+          <div class="field" style="grid-column:span 6">
+            <label>Prévia</label>
+            <div class="imgPrev">
+              <img id="sigPreview" style="max-width:100%;height:auto;display:none"/>
+              <div id="sigEmpty" class="muted">Nenhuma assinatura salva.</div>
+            </div>
+          </div>
+          <div class="field" style="grid-column:span 6">
+            <label>Info</label>
+            <textarea id="sigInfo" readonly></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dossiê (consulta) -->
+      <div id="viewDossie" style="display:none;">
+        <div class="pill">📂 Dossiê do Aluno</div>
+        <div class="muted" id="dosHead" style="margin-top:8px"></div>
+        <div class="sep"></div>
+        <div class="list" id="dosList"></div>
+        <div class="sep"></div>
+        <button id="btnFecharDossie">Fechar dossiê</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const DATABASE_URL = "https://rite-fa75b-default-rtdb.firebaseio.com";
+const INSTRUTOR_USER = "Fenille";
+const INSTRUTOR_PASS = "140965";
+const ALUNO_PASS = "1234";
+
+// Regras (ajuste fino depois; tiros conforme combinado)
+const RULES = {
+  PPA_PISTOLA: { max: 350, shots: 44, shotOptions: [0,5,10], procCount: 25, procPts: 10, penPts: 10 },
+  PPA_ESP12:   { max: 350, shots: 22, shotOptions: [0,10,20], procCount: 25, procPts: 10, penPts: 10 },
+};
+
+// Procedimentos / Penalidades / Reprovação (extraídos dos modelos enviados)
+const PROC_MAP = {
+  "PPA_PISTOLA": [
+    {
+      "n": 1,
+      "t": "Mediante ordem preparar a pistola para executar a “PPA” colocando-a…",
+      "d": "Mediante ordem preparar a pistola para executar a “PPA” colocando-a no coldre (alimentada, carregada, cão desarmado, travada, coldre abotoado). Primeiro carregador com 6 (seis) cartuchos; um carregador de reposição com 10 (dez) cartuchos."
+    },
+    {
+      "n": 2,
+      "t": "Ao sinal convencionado sacar a pistola e colocar-se em proteção no …",
+      "d": "Ao sinal convencionado sacar a pistola e colocar-se em proteção no abrigo ”A”, com rapidez, em condições de atuar e disparar"
+    },
+    {
+      "n": 3,
+      "t": "Varredura e saída do abrigo “A”",
+      "d": "Varredura e saída do abrigo “A”"
+    },
+    {
+      "n": 4,
+      "t": "Primeira progressão (do abrigo “A” até o abrigo “B”)",
+      "d": "Primeira progressão (do abrigo “A” até o abrigo “B”)"
+    },
+    {
+      "n": 5,
+      "t": "Proteger-se e atuar corretamente no abrigo “B” e progressão até o a…",
+      "d": "Proteger-se e atuar corretamente no abrigo “B” e progressão até o abrigo “C”"
+    },
+    {
+      "n": 6,
+      "t": "Proteger-se e atuar corretamente no abrigo “C” e progressão até o a…",
+      "d": "Proteger-se e atuar corretamente no abrigo “C” e progressão até o abrigo “D”"
+    },
+    {
+      "n": 7,
+      "t": "Proteger-se e atuar corretamente na “janela baixa” (abrigo “D”)",
+      "d": "Proteger-se e atuar corretamente na “janela baixa” (abrigo “D”)"
+    },
+    {
+      "n": 8,
+      "t": "Proteger-se e atuar corretamente no canto da direita (abrigo “D)",
+      "d": "Proteger-se e atuar corretamente no canto da direita (abrigo “D)"
+    },
+    {
+      "n": 9,
+      "t": "Primeira verbalização obrigatória, com posição correta da arma (abr…",
+      "d": "Primeira verbalização obrigatória, com posição correta da arma (abrigo “D”)"
+    },
+    {
+      "n": 10,
+      "t": "Proteger-se e atuar corretamente na “janela alta” (abrigo “D”)",
+      "d": "Proteger-se e atuar corretamente na “janela alta” (abrigo “D”)"
+    },
+    {
+      "n": 11,
+      "t": "Proteger-se e atuar corretamente no canto da esquerda (abrigo “D”)",
+      "d": "Proteger-se e atuar corretamente no canto da esquerda (abrigo “D”)"
+    },
+    {
+      "n": 12,
+      "t": "Segunda verbalização obrigatória, com posição correta da arma (abri…",
+      "d": "Segunda verbalização obrigatória, com posição correta da arma (abrigo “D”)"
+    },
+    {
+      "n": 13,
+      "t": "Terceira verbalização obrigatória, com posição correta da arma (abr…",
+      "d": "Terceira verbalização obrigatória, com posição correta da arma (abrigo “D”)"
+    },
+    {
+      "n": 14,
+      "t": "Recarregar a pistola corretamente, com rapidez, protegido, e sem pe…",
+      "d": "Recarregar a pistola corretamente, com rapidez, protegido, e sem perder o contato visual com a área de perigo (recarga tática ou emergencial, a critério do aluno)."
+    },
+    {
+      "n": 15,
+      "t": "Atuar com a pistola sempre carregada",
+      "d": "Atuar com a pistola sempre carregada"
+    },
+    {
+      "n": 16,
+      "t": "Efetuar os disparos com rapidez (dois de cada vez em cada alvo atir…",
+      "d": "Efetuar os disparos com rapidez (dois de cada vez em cada alvo atirável)."
+    },
+    {
+      "n": 17,
+      "t": "Conduzir a pistola corretamente, com o cano e o olhar na direção do…",
+      "d": "Conduzir a pistola corretamente, com o cano e o olhar na direção do perigo."
+    },
+    {
+      "n": 18,
+      "t": "Dedo fora do gatilho quando dos deslocamentos, e quando não for par…",
+      "d": "Dedo fora do gatilho quando dos deslocamentos, e quando não for para atirar 1 CONTINUA CONTINUAÇÃO CERTO ERRADO"
+    },
+    {
+      "n": 19,
+      "t": "Outras verbalizações, com posição correta da arma.",
+      "d": "Outras verbalizações, com posição correta da arma."
+    },
+    {
+      "n": 20,
+      "t": "Aplicação de sinais policiais, em situações obrigatórias, como se e…",
+      "d": "Aplicação de sinais policiais, em situações obrigatórias, como se estivesse com um companheiro"
+    },
+    {
+      "n": 21,
+      "t": "Proteger-se corretamente nos demais procedimentos.",
+      "d": "Proteger-se corretamente nos demais procedimentos."
+    },
+    {
+      "n": 22,
+      "t": "Regressão (do abrigo “D” até o abrigo “A”)",
+      "d": "Regressão (do abrigo “D” até o abrigo “A”)"
+    },
+    {
+      "n": 23,
+      "t": "Terminada a regressão coldrear a pistola, em segurança, sem descarr…",
+      "d": "Terminada a regressão coldrear a pistola, em segurança, sem descarregá-la, travada. Aguardar ordens"
+    },
+    {
+      "n": 24,
+      "t": "Mediante ordem retirar a pistola do coldre, descarregá-la, com segu…",
+      "d": "Mediante ordem retirar a pistola do coldre, descarregá-la, com segurança, entregando-a ao professor como se a estivesse entregando na reserva de armas ou a outro companheiro"
+    },
+    {
+      "n": 25,
+      "t": "Solução de incidentes de tiro (caso ocorram) TOTAL DOS PONTOS POSIT…",
+      "d": "Solução de incidentes de tiro (caso ocorram) TOTAL DOS PONTOS POSITIVOS DOS PROCEDIMENTOS B"
+    }
+  ],
+  "PPA_ESP12": [
+    {
+      "n": 1,
+      "t": "Mediante ordem preparar a espingarda para executar a “PPA” (alimentada",
+      "d": "Mediante ordem preparar a espingarda para executar a “PPA” (alimentada; depósito com 3 cartuchos, mais 5 de reposição no porta cartuchos, todos “singular” – projétil único; em bandoleira de três pontos individualizada; “posição sul”)"
+    },
+    {
+      "n": 2,
+      "t": "Ao sinal convencionado carregar a espingarda e colocar-se em proteç…",
+      "d": "Ao sinal convencionado carregar a espingarda e colocar-se em proteção no abrigo ”A”, com rapidez, em condições de atuar e disparar"
+    },
+    {
+      "n": 3,
+      "t": "Varredura e saída do primeiro abrigo (abrigo “A”)",
+      "d": "Varredura e saída do primeiro abrigo (abrigo “A”)"
+    },
+    {
+      "n": 4,
+      "t": "Primeira progressão (do abrigo “A” até o abrigo “B”)",
+      "d": "Primeira progressão (do abrigo “A” até o abrigo “B”)"
+    },
+    {
+      "n": 5,
+      "t": "Proteger-se e atuar corretamente no abrigo “B” e progressão até o a…",
+      "d": "Proteger-se e atuar corretamente no abrigo “B” e progressão até o abrigo “C”"
+    },
+    {
+      "n": 6,
+      "t": "Proteger-se e atuar corretamente no abrigo “C” e progressão até o a…",
+      "d": "Proteger-se e atuar corretamente no abrigo “C” e progressão até o abrigo “D”"
+    },
+    {
+      "n": 7,
+      "t": "Proteger-se e atuar corretamente na “janela baixa” (abrigo “D”)",
+      "d": "Proteger-se e atuar corretamente na “janela baixa” (abrigo “D”)"
+    },
+    {
+      "n": 8,
+      "t": "Proteger-se e atuar corretamente no canto da direita (abrigo “D”)",
+      "d": "Proteger-se e atuar corretamente no canto da direita (abrigo “D”)"
+    },
+    {
+      "n": 9,
+      "t": "Primeira verbalização obrigatória, com posição correta da arma (abr…",
+      "d": "Primeira verbalização obrigatória, com posição correta da arma (abrigo “D”)"
+    },
+    {
+      "n": 10,
+      "t": "Proteger-se e atuar corretamente na “janela alta” (abrigo “D”)",
+      "d": "Proteger-se e atuar corretamente na “janela alta” (abrigo “D”)"
+    },
+    {
+      "n": 11,
+      "t": "Proteger-se e atuar corretamente no canto da esquerda (abrigo “D”)",
+      "d": "Proteger-se e atuar corretamente no canto da esquerda (abrigo “D”)"
+    },
+    {
+      "n": 12,
+      "t": "Segunda verbalização obrigatória, com posição correta da arma (abri…",
+      "d": "Segunda verbalização obrigatória, com posição correta da arma (abrigo “D”)"
+    },
+    {
+      "n": 13,
+      "t": "Terceira verbalização obrigatória, com posição correta da arma (abr…",
+      "d": "Terceira verbalização obrigatória, com posição correta da arma (abrigo “D”)"
+    },
+    {
+      "n": 14,
+      "t": "Realimentar e recarregar a espingarda corretamente, com rapidez, pr…",
+      "d": "Realimentar e recarregar a espingarda corretamente, com rapidez, protegido, e sem perder o contato visual com a área de perigo (tática ou emergencial, a critério do aluno)."
+    },
+    {
+      "n": 15,
+      "t": "Atuar com a espingarda sempre carregada",
+      "d": "Atuar com a espingarda sempre carregada"
+    },
+    {
+      "n": 16,
+      "t": "Efetuar o disparo com rapidez (um disparo em cada alvo atirável)",
+      "d": "Efetuar o disparo com rapidez (um disparo em cada alvo atirável)"
+    },
+    {
+      "n": 17,
+      "t": "Conduzir a espingarda corretamente, com o cano e o olhar na direção…",
+      "d": "Conduzir a espingarda corretamente, com o cano e o olhar na direção do perigo."
+    },
+    {
+      "n": 18,
+      "t": "Dedo fora do gatilho quando dos deslocamentos, e quando não for par…",
+      "d": "Dedo fora do gatilho quando dos deslocamentos, e quando não for para atirar 1 CONTINUA CONTINUAÇÃO CERTO ERRADO"
+    },
+    {
+      "n": 19,
+      "t": "Outras verbalizações, com posição correta da arma.",
+      "d": "Outras verbalizações, com posição correta da arma."
+    },
+    {
+      "n": 20,
+      "t": "Aplicação de sinais policiais, em situações obrigatórias, como se e…",
+      "d": "Aplicação de sinais policiais, em situações obrigatórias, como se estivesse com um companheiro"
+    },
+    {
+      "n": 21,
+      "t": "Proteger-se corretamente nos demais procedimentos.",
+      "d": "Proteger-se corretamente nos demais procedimentos."
+    },
+    {
+      "n": 22,
+      "t": "Regressão (do abrigo “D” até o abrigo “A”).",
+      "d": "Regressão (do abrigo “D” até o abrigo “A”)."
+    },
+    {
+      "n": 23,
+      "t": "Terminada a regressão colocar a espingarda em “posição sul”, gatilh…",
+      "d": "Terminada a regressão colocar a espingarda em “posição sul”, gatilho travado, sem descarregá-la. Aguardar ordens"
+    },
+    {
+      "n": 24,
+      "t": "Mediante ordem, descarregar a espingarda, com segurança, entregando…",
+      "d": "Mediante ordem, descarregar a espingarda, com segurança, entregando-a ao professor, como se a estivesse entregando na reserva de armas, ou a outro companheiro"
+    },
+    {
+      "n": 25,
+      "t": "Solução de incidentes de tiro (caso ocorram) TOTAL DOS PONTOS POSIT…",
+      "d": "Solução de incidentes de tiro (caso ocorram) TOTAL DOS PONTOS POSITIVOS DOS PROCEDIMENTOS B"
+    }
+  ]
+};
+const PEN_MAP  = {
+  "PPA_PISTOLA": [
+    {
+      "n": 1,
+      "t": "Arma e equipamentos mal ajustados ao corpo atrapalhando a execução …",
+      "d": "Arma e equipamentos mal ajustados ao corpo atrapalhando a execução dos exercícios."
+    },
+    {
+      "n": 2,
+      "t": "Disparo, sem acerto, em alvo não atirável. Cada disparo uma penalid…",
+      "d": "Disparo, sem acerto, em alvo não atirável. Cada disparo uma penalidade. Ver item seguinte"
+    },
+    {
+      "n": 3,
+      "t": "Acerto em alvo não atirável. Cada acerto duas penalidades. Ver item…",
+      "d": "Acerto em alvo não atirável. Cada acerto duas penalidades. Ver item anterior (um não exclui o outro)"
+    },
+    {
+      "n": 4,
+      "t": "Disparos no mesmo alvo, além do determinado (cada disparo a mais um…",
+      "d": "Disparos no mesmo alvo, além do determinado (cada disparo a mais uma penalidade)"
+    },
+    {
+      "n": 5,
+      "t": "Deixar de disparar contra alvo agressor obrigatoriamente atirável (…",
+      "d": "Deixar de disparar contra alvo agressor obrigatoriamente atirável (cada disparo uma penalidade)."
+    },
+    {
+      "n": 6,
+      "t": "Não manter a arma em “posição de tiro”, efetuando “varredura”, após…",
+      "d": "Não manter a arma em “posição de tiro”, efetuando “varredura”, após os disparos"
+    },
+    {
+      "n": 7,
+      "t": "Derrubar o carregador de reposição",
+      "d": "Derrubar o carregador de reposição"
+    },
+    {
+      "n": 8,
+      "t": "Acionar o gatilho estando a pistola travada ou descarregada.",
+      "d": "Acionar o gatilho estando a pistola travada ou descarregada."
+    },
+    {
+      "n": 9,
+      "t": "Ultrapassar a arma, ou qualquer parte do corpo, para além da zona d…",
+      "d": "Ultrapassar a arma, ou qualquer parte do corpo, para além da zona de segurança."
+    },
+    {
+      "n": 10,
+      "t": "Não completar a pista por falta de munição (uma penalidade para cad…",
+      "d": "Não completar a pista por falta de munição (uma penalidade para cada tiro faltante)."
+    },
+    {
+      "n": 11,
+      "t": "Precipitar-se. Praticar a valentia perigosa. Não pedir apoio quando…",
+      "d": "Precipitar-se. Praticar a valentia perigosa. Não pedir apoio quando necessário. TOTAL DOS PONTOS NEGATIVOS DAS PENALIDADES C"
+    }
+  ],
+  "PPA_ESP12": [
+    {
+      "n": 1,
+      "t": "Arma e equipamentos mal ajustados ao corpo atrapalhando a execução …",
+      "d": "Arma e equipamentos mal ajustados ao corpo atrapalhando a execução dos exercícios."
+    },
+    {
+      "n": 2,
+      "t": "Disparo, sem acerto, em alvo não atirável. Cada disparo uma penalid…",
+      "d": "Disparo, sem acerto, em alvo não atirável. Cada disparo uma penalidade. Ver item seguinte"
+    },
+    {
+      "n": 3,
+      "t": "Acerto em alvo não atirável. Cada acerto duas penalidades. Ver item…",
+      "d": "Acerto em alvo não atirável. Cada acerto duas penalidades. Ver item anterior (um não exclui o outro)"
+    },
+    {
+      "n": 4,
+      "t": "Disparos no mesmo alvo, além do determinado (cada disparo a mais um…",
+      "d": "Disparos no mesmo alvo, além do determinado (cada disparo a mais uma penalidade)"
+    },
+    {
+      "n": 5,
+      "t": "Deixar de disparar contra alvo agressor obrigatoriamente atirável (…",
+      "d": "Deixar de disparar contra alvo agressor obrigatoriamente atirável (cada disparo uma penalidade)."
+    },
+    {
+      "n": 6,
+      "t": "Recarregar e manter a arma em “posição de tiro”, efetuando “varredu…",
+      "d": "Recarregar e manter a arma em “posição de tiro”, efetuando “varredura”, após os disparos"
+    },
+    {
+      "n": 7,
+      "t": "Derrubar munição de reposição",
+      "d": "Derrubar munição de reposição"
+    },
+    {
+      "n": 8,
+      "t": "Acionar o gatilho estando a espingarda descarregada ou com o gatilh…",
+      "d": "Acionar o gatilho estando a espingarda descarregada ou com o gatilho travado."
+    },
+    {
+      "n": 9,
+      "t": "Ultrapassar a arma, ou qualquer parte do corpo, para além da zona d…",
+      "d": "Ultrapassar a arma, ou qualquer parte do corpo, para além da zona de segurança."
+    },
+    {
+      "n": 10,
+      "t": "Não completar a pista por falta de munição (uma penalidade para cad…",
+      "d": "Não completar a pista por falta de munição (uma penalidade para cada tiro faltante)."
+    },
+    {
+      "n": 11,
+      "t": "Precipitar-se. Praticar a valentia perigosa. Não pedir apoio quando…",
+      "d": "Precipitar-se. Praticar a valentia perigosa. Não pedir apoio quando necessário. TOTAL DOS PONTOS NEGATIVOS DAS PENALIDADES C"
+    }
+  ]
+};
+const REP_MAP  = {
+  "PPA_PISTOLA": [
+    {
+      "n": 1,
+      "t": "Apresentar descontrole emocional",
+      "d": "Apresentar descontrole emocional"
+    },
+    {
+      "n": 2,
+      "t": "Atentar contra as normas de segurança",
+      "d": "Atentar contra as normas de segurança"
+    },
+    {
+      "n": 3,
+      "t": "Demonstrar dificuldades no manejo ou na atuação com a pistola.",
+      "d": "Demonstrar dificuldades no manejo ou na atuação com a pistola."
+    },
+    {
+      "n": 4,
+      "t": "Disparar para fora do barranco de contenção dos projéteis.",
+      "d": "Disparar para fora do barranco de contenção dos projéteis."
+    },
+    {
+      "n": 5,
+      "t": "Disparo acidental com ou sem vítima.",
+      "d": "Disparo acidental com ou sem vítima."
+    },
+    {
+      "n": 6,
+      "t": "Derrubar a pistola. Caso ocorra uma ou mais dessas penalidades fata…",
+      "d": "Derrubar a pistola. Caso ocorra uma ou mais dessas penalidades fatais o aluno, após voltar á calma, e ser orientado e ensinado, repetirá toda a “PPA”, modificada. “E” – PONTUAÇÃO FINAL – “A” mais “B” menos “C” E “F” – CONCEITOS/NOTA De 00 % à 49 % da pontuação máxima possível (de ________ a _______ pts : - “Insuficiente” De 50% à 69% da pontuação máxima possível (de_________ a________ pts:- “Regular” NOTA__________________ De 70% à 84% da pontuação máxima possível (de_________ a________ pts:- “Bom” CONCEITO_____________ De 85% à 95% da pontuação máxima possível (de_________ a________ pts:- “Muito bom” (PASSAR PARA O CABEÇALHO) De 96% à 100% da pontuação máxima possível (de________ a_______ _pts:- “Excepcional” Conceito ou nota mínima para aprovação, previamente estabelecida:- ___________ Caso seja reprovado o aluno, após voltar à calma, e ser orientado e ensinado, repetirá toda a “PPA”, modificada. CONCEITO OU NOTA FINAL (Passar para o cabeçalho) F Assinatura do Aluno Posto/Grad, RE, nome de guerra legível e assinatura do professor Anexar esta súmula ao “RIT” do aluno OBS.: - Anotações no verso GIRALDI 2"
+    }
+  ],
+  "PPA_ESP12": [
+    {
+      "n": 1,
+      "t": "Apresentar descontrole emocional",
+      "d": "Apresentar descontrole emocional"
+    },
+    {
+      "n": 2,
+      "t": "Atentar contra as normas de segurança",
+      "d": "Atentar contra as normas de segurança"
+    },
+    {
+      "n": 3,
+      "t": "Demonstrar dificuldades no manejo ou na atuação com a espingarda.",
+      "d": "Demonstrar dificuldades no manejo ou na atuação com a espingarda."
+    },
+    {
+      "n": 4,
+      "t": "Disparar para fora do barranco de contenção dos projéteis.",
+      "d": "Disparar para fora do barranco de contenção dos projéteis."
+    },
+    {
+      "n": 5,
+      "t": "Disparo acidental com ou sem vítima.",
+      "d": "Disparo acidental com ou sem vítima."
+    },
+    {
+      "n": 6,
+      "t": "Derrubar a espingarda. Caso ocorra uma ou mais dessas penalidades f…",
+      "d": "Derrubar a espingarda. Caso ocorra uma ou mais dessas penalidades fatais o aluno, após voltar á calma, e ser orientado e ensinado, repetirá toda a “PPA”, modificada. “E” – PONTUAÇÃO FINAL – “A” mais “B” menos “C” E “F” – CONCEITOS/NOTA De 00 % à 49 % da pontuação máxima possível (de ________ a _______ pts : - “Insuficiente” De 50% à 69% da pontuação máxima possível (de_________ a________ pts:- “Regular” NOTA__________________ De 70% à 84% da pontuação máxima possível (de_________ a________ pts:- “Bom” CONCEITO_____________ De 85% à 95% da pontuação máxima possível (de_________ a________ pts:- “Muito bom” (PASSAR PARA O CABEÇALHO) De 96% à 100% da pontuação máxima possível (de________ a_______ _pts:- “Excepcional” Conceito ou nota mínima para aprovação, previamente estabelecida:- ___________ Caso seja reprovado o aluno, após voltar à calma, e ser orientado e ensinado, repetirá toda a “PPA”, modificada. CONCEITO OU NOTA FINAL (Passar para o cabeçalho) F Assinatura do Aluno Posto/Grad, RE, nome de guerra legível e assinatura do professor Anexar esta súmula ao “RIT” do aluno OBS.: - Anotações no verso GIRALDI 2 3"
+    }
+  ]
+};
+
+
+let session=null;
+let currentId=null;
+let currentObj=null;
+let sigTempDataUrl=null;
+
+const $=(id)=>document.getElementById(id);
+const isoNow=()=>new Date().toISOString();
+const safe=(s)=>(s??"").toString().trim();
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+
+function setBadge(text, ok){
+  const b=$("badge");
+  b.textContent=text;
+  b.classList.toggle("ok",!!ok);
+}
+
+async function rtdbGet(path, query=""){
+  const url=`${DATABASE_URL}/${path}.json${query}`;
+  const res=await fetch(url);
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbPut(path, data){
+  const url=`${DATABASE_URL}/${path}.json`;
+  const res=await fetch(url,{method:"PUT",headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbPatch(path, data){
+  const url=`${DATABASE_URL}/${path}.json`;
+  const res=await fetch(url,{method:"PATCH",headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbPost(path, data){
+  const url=`${DATABASE_URL}/${path}.json`;
+  const res=await fetch(url,{method:"POST",headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbDelete(path){
+  const url=`${DATABASE_URL}/${path}.json`;
+  const res=await fetch(url,{method:"DELETE"});
+  if(!res.ok) throw new Error(await res.text());
+  return true;
+}
+
+function conceitoPorNota10(n){
+  // mesma escala, mas usando % equivalente
+  const pct=clamp(Math.round((n/10)*100),0,100);
+  if (pct <= 49) return "Insuficiente";
+  if (pct <= 69) return "Regular";
+  if (pct <= 84) return "Bom";
+  if (pct <= 95) return "Muito bom";
+  return "Excepcional";
+}
+
+function show(el, yes){ el.style.display = yes ? "" : "none"; }
+
+function openAluno(){
+  show($("viewAluno"), true);
+  show($("viewInstr"), false);
+  show($("viewSig"), false);
+  show($("viewDossie"), false);
+}
+function openInstr(){
+  show($("viewAluno"), false);
+  show($("viewInstr"), true);
+  show($("viewSig"), false);
+  show($("viewDossie"), false);
+  loadInstrList();
+}
+function openSig(){
+  show($("viewAluno"), false);
+  show($("viewInstr"), false);
+  show($("viewSig"), true);
+  show($("viewDossie"), false);
+  loadSig();
+}
+function openDossieView(re, items){
+  show($("viewAluno"), false);
+  show($("viewInstr"), false);
+  show($("viewSig"), false);
+  show($("viewDossie"), true);
+  $("dosHead").textContent = `RE ${re} • ${items.length} avaliação(ões)`;
+  const list=$("dosList");
+  list.innerHTML="";
+  for(const it of items){
+    const div=document.createElement("div");
+    div.className="item";
+    div.innerHTML=`
+      <div>
+        <div><b>${it.aluno1?.nome||"(sem nome)"}</b> • ${it.tipo||"-"}</div>
+        <div class="muted">${it.data||"-"} • ${it.local||"-"} • <span style="color:${it.status==='FINALIZADO'?'#a8ffb0':'#fff0a8'}">${it.status||"-"}</span></div>
+      </div>
+      <div class="right">
+        <span class="pill">E: ${it.correcao?.E ?? 0}</span>
+        <span class="pill">Nota: ${(it.correcao?.nota10 ?? 0).toFixed ? (it.correcao?.nota10 ?? 0).toFixed(3) : (it.correcao?.nota10 ?? 0)}</span>
+        <button class="tiny" data-a="open">Abrir</button>
+        <button class="tiny" data-a="print">Súmula</button>
+      </div>`;
+    div.querySelector('[data-a="open"]').addEventListener("click", ()=>{
+      // abre como leitura no editor (se instrutor logado) ou só imprime
+      if(session?.role==="instrutor"){ openEditor(it.id, it); }
+      else { imprimirFrom(it); }
+    });
+    div.querySelector('[data-a="print"]').addEventListener("click", ()=> imprimirFrom(it));
+    list.appendChild(div);
+  }
+}
+
+function setRoleUI(){
+  show($("appCard"), true);
+  if(session.role==="aluno"){
+    $("whoPill").textContent="🧑‍🎯 Aluno";
+    $("whoSub").textContent=`RE: ${session.re}`;
+    $("tabAluno").style.display="";
+    $("tabInstr").style.display="none";
+    $("tabSig").style.display="none";
+    openAluno();
+    $("aRE").value=session.re;
+    onREChange(true);
+  }else{
+    $("whoPill").textContent="🧑‍🏫 Instrutor";
+    $("whoSub").textContent=`Usuário: ${session.user}`;
+    $("tabAluno").style.display="none";
+    $("tabInstr").style.display="";
+    $("tabSig").style.display="";
+    openInstr();
+    loadSig();
+  }
+}
+
+function logout(){
+  session=null; currentId=null; currentObj=null; sigTempDataUrl=null;
+  show($("appCard"), false);
+  $("loginUser").value=""; $("loginPass").value="";
+}
+
+function login(){
+  const u=safe($("loginUser").value);
+  const p=safe($("loginPass").value);
+  if(!u||!p) return alert("Preencha usuário e senha.");
+  if(u.toLowerCase()===INSTRUTOR_USER.toLowerCase() && p===INSTRUTOR_PASS){
+    session={role:"instrutor", user:INSTRUTOR_USER};
+    setRoleUI(); return;
+  }
+  if(p!==ALUNO_PASS) return alert("Senha inválida.");
+  session={role:"aluno", re:u};
+  setRoleUI();
+}
+
+// --- RE AUTOFILL / TRAVA NOME ---
+let reLock=false;
+async function onREChange(quiet){
+  const re=safe($("aRE").value||"");
+  if(!re){ reLock=false; $("reHint").textContent=""; return; }
+  try{
+    const cad = await rtdbGet(`alunos/${encodeURIComponent(re)}`);
+    if(cad && cad.nome){
+      $("aNome").value = cad.nome || "";
+      $("aPG").value = cad.postoGrad || "";
+      $("aArma").value = cad.armaNumero || "";
+      $("aNome").disabled = true;
+      $("aNome").classList.add("lock");
+      reLock=true;
+      $("reHint").textContent="✅ Cadastro encontrado. Nome bloqueado para este RE.";
+    }else{
+      $("aNome").disabled = false;
+      $("aNome").classList.remove("lock");
+      reLock=false;
+      $("reHint").textContent="ℹ️ RE ainda sem cadastro. No envio, será criado e ficará bloqueado daí em diante.";
+    }
+  }catch(e){
+    if(!quiet) console.error(e);
+    // se rules bloqueiam leitura, não trava
+    $("aNome").disabled=false;
+    $("aNome").classList.remove("lock");
+    reLock=false;
+    $("reHint").textContent="⚠️ Não consegui ler cadastro (Rules?). Você ainda pode enviar, mas a trava depende de leitura liberada.";
+  }
+}
+
+async function enviarCabecalho(){
+  const tipo=$("tipo").value;
+  const rule=RULES[tipo];
+  if(!rule) return alert("Tipo inválido.");
+
+  const re=safe($("aRE").value) || session.re;
+  const nome=safe($("aNome").value);
+  if(!re || !nome) return alert("Preencha RE e Nome.");
+
+  // checar conflito: se cadastro existe, não permite nome diferente
+  try{
+    const cad=await rtdbGet(`alunos/${encodeURIComponent(re)}`).catch(()=>null);
+    if(cad?.nome && safe(cad.nome).toLowerCase() !== nome.toLowerCase()){
+      return alert("⚠️ Este RE já possui cadastro com outro nome. Não é permitido alterar.");
+    }
+  }catch(e){}
+
+  const payload={
+    tipo,
+    data:$("data").value||"",
+    local:safe($("local").value),
+    unidade:safe($("unidade").value),
+    aluno1:{ nome, re, postoGrad:safe($("aPG").value), armaNumero:safe($("aArma").value) },
+    obsAluno:safe($("obsAluno").value),
+    status:"AGUARDANDO_INSTRUTOR",
+    criadoEm:isoNow(),
+    criadoPor:session.re,
+    correcao:{
+      tiros:Array(rule.shots).fill(0),
+      procedimentosOK:Array(rule.procCount).fill(true),
+      penalidadesMarcadas:[],
+      reprovacaoMarcadas:[],
+      A:0, B:rule.procCount*rule.procPts, C:0, E:0,
+      nota10:0, conceito:"",
+      obsInstr:""
+    },
+    validadoEm:null, validadoPor:null
+  };
+
+  if(!payload.data || !payload.local || !payload.unidade) return alert("Preencha: Data, Local e Unidade.");
+
+  try{
+    // cria/atualiza cadastro do aluno (uma vez)
+    const cadPath=`alunos/${encodeURIComponent(re)}`;
+    const cadExisting=await rtdbGet(cadPath).catch(()=>null);
+    if(!cadExisting?.nome){
+      await rtdbPut(cadPath, {
+        nome: nome,
+        postoGrad: payload.aluno1.postoGrad || "",
+        armaNumero: payload.aluno1.armaNumero || "",
+        atualizadoEm: isoNow()
+      });
+    }
+
+    const resp=await rtdbPost("avaliacoes", payload);
+    const id=resp?.name;
+    if(!id) throw new Error("Push sem ID");
+
+    await rtdbPut(`indexPorRE/${encodeURIComponent(re)}/${id}`, true).catch(()=>{});
+    $("alunoMsg").textContent = `✅ Enviado! ID: ${id}`;
+    $("obsAluno").value="";
+  }catch(e){
+    console.error(e);
+    alert("Erro ao enviar (Rules/Conexão). Abra via http://localhost (não file://).");
+  }
+}
+
+// --- CONSULTA (dossiê) ---
+async function consultarRE(){
+  const re=safe($("consultaRE").value);
+  if(!re) return alert("Digite um RE.");
+
+  $("consultaList").innerHTML = `<div class="muted">Consultando…</div>`;
+  try{
+    // 1) tenta índice
+    const idx = await rtdbGet(`indexPorRE/${encodeURIComponent(re)}`).catch(()=>null);
+    let items=[];
+    if(idx){
+      const ids=Object.keys(idx);
+      const reads=await Promise.all(ids.map(id=>rtdbGet(`avaliacoes/${id}`).catch(()=>null)));
+      items = reads.map((v,i)=> v?({id:ids[i],...v}):null).filter(Boolean);
+    }else{
+      // 2) fallback: últimas 500 e filtra por RE
+      const data = await rtdbGet("avaliacoes", `?orderBy="$key"&limitToLast=500`);
+      const ids = data?Object.keys(data):[];
+      items = ids.map(id=>({id,...data[id]})).filter(x=>x?.aluno1?.re===re);
+    }
+    items.sort((a,b)=>(b.criadoEm||"").localeCompare(a.criadoEm||""));
+
+    if(!items.length){
+      $("consultaList").innerHTML = `<div class="muted">Nenhum registro para esse RE.</div>`;
+      return;
+    }
+
+    // render resumo + botão abrir dossiê
+    $("consultaList").innerHTML = "";
+    const head=document.createElement("div");
+    head.className="item";
+    head.innerHTML=`
+      <div>
+        <div><b>Dossiê RE ${re}</b></div>
+        <div class="muted">${items.length} avaliação(ões). Clique em “Abrir dossiê”.</div>
+      </div>
+      <div class="right"><button class="primary tiny">Abrir dossiê</button></div>`;
+    head.querySelector("button").addEventListener("click", ()=>{
+      // abre dentro do appCard (mesmo sem login)
+      show($("appCard"), true);
+      $("whoPill").textContent="🔎 Consulta";
+      $("whoSub").textContent="Dossiê por RE";
+      $("tabAluno").style.display="none";
+      $("tabInstr").style.display="none";
+      $("tabSig").style.display="none";
+      openDossieView(re, items);
+    });
+    $("consultaList").appendChild(head);
+
+    for(const it of items.slice(0,5)){
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML=`
+        <div>
+          <div><b>${it.aluno1?.nome||"(sem nome)"}</b> • ${it.tipo||"-"}</div>
+          <div class="muted">${it.data||"-"} • ${it.local||"-"} • ${it.status||"-"}</div>
+        </div>
+        <div class="right">
+          <span class="pill">Nota: ${(it.correcao?.nota10 ?? 0).toFixed ? (it.correcao?.nota10 ?? 0).toFixed(3) : (it.correcao?.nota10 ?? 0)}</span>
+          <button class="tiny">Súmula</button>
+        </div>`;
+      div.querySelector("button").addEventListener("click", ()=> imprimirFrom(it));
+      $("consultaList").appendChild(div);
+    }
+
+  }catch(e){
+    console.error(e);
+    $("consultaList").innerHTML = `<div class="muted">Erro: Rules/Conexão. Abra via servidor (http://localhost) e libere leitura no RTDB.</div>`;
+  }
+}
+
+// --- INSTRUTOR LISTA ---
+async function loadInstrList(){
+  $("instrList").innerHTML=`<div class="muted">Carregando…</div>`;
+  try{
+    const data=await rtdbGet("avaliacoes", `?orderBy="$key"&limitToLast=80`);
+    const ids=data?Object.keys(data):[];
+    const items=ids.map(id=>({id,...data[id]})).filter(x=>x&&x.tipo).sort((a,b)=>(b.criadoEm||"").localeCompare(a.criadoEm||""));
+    let total=items.length, aguard=0, fin=0;
+    for(const it of items){ if(it.status==="AGUARDANDO_INSTRUTOR")aguard++; if(it.status==="FINALIZADO")fin++; }
+    $("kpiTotal").textContent=`Total: ${total}`;
+    $("kpiAguard").textContent=`Aguardando: ${aguard}`;
+    $("kpiFinal").textContent=`Finalizados: ${fin}`;
+    $("instrList").innerHTML="";
+    for(const it of items){
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML=`
+        <div>
+          <div><b>${it.aluno1?.nome||"(sem nome)"}</b> • RE ${it.aluno1?.re||"-"}</div>
+          <div class="muted">${it.tipo||"-"} • ${it.data||"-"} • <span style="color:${it.status==='FINALIZADO'?'#a8ffb0':'#fff0a8'}">${it.status||"-"}</span></div>
+        </div>
+        <div class="right">
+          <span class="pill">E: ${it.correcao?.E ?? 0}</span>
+          <span class="pill">Nota: ${(it.correcao?.nota10 ?? 0).toFixed ? (it.correcao?.nota10 ?? 0).toFixed(3) : (it.correcao?.nota10 ?? 0)}</span>
+          <button data-id="${it.id}" class="tiny">Abrir</button>
+        </div>`;
+      div.querySelector("button").addEventListener("click", ()=>openEditor(it.id,it));
+      $("instrList").appendChild(div);
+    }
+  }catch(e){
+    console.error(e);
+    $("instrList").innerHTML=`<div class="muted">Erro: Rules/Conexão.</div>`;
+  }
+}
+
+// --- EDITOR ---
+function openEditor(id,it){
+  currentId=id; currentObj=it;
+  if(!currentObj.correcao) currentObj.correcao={};
+  const rule=RULES[currentObj.tipo]; if(!rule) return alert("Tipo não suportado.");
+
+  if(!Array.isArray(currentObj.correcao.tiros) || currentObj.correcao.tiros.length!==rule.shots) currentObj.correcao.tiros=Array(rule.shots).fill(0);
+  if(!Array.isArray(currentObj.correcao.procedimentosOK) || currentObj.correcao.procedimentosOK.length!==rule.procCount) currentObj.correcao.procedimentosOK=Array(rule.procCount).fill(true);
+  if(!Array.isArray(currentObj.correcao.penalidadesMarcadas)) currentObj.correcao.penalidadesMarcadas=[];
+  if(!Array.isArray(currentObj.correcao.reprovacaoMarcadas)) currentObj.correcao.reprovacaoMarcadas=[];
+
+  $("edHeader").textContent=`ID ${id} • ${currentObj.tipo} • ${currentObj.data||"-"} • ${currentObj.aluno1?.nome||"-"} (RE ${currentObj.aluno1?.re||"-"})`;
+  $("shotsHelp").textContent = currentObj.tipo==="PPA_PISTOLA"
+    ? `Pistola: ${rule.shots} tiros • valores: ${rule.shotOptions.join(", ")}`
+    : `Espingarda 12: ${rule.shots} tiros • valores: ${rule.shotOptions.join(", ")}`;
+
+  buildShots(rule); buildProcedures(rule); buildPenalties(rule); buildReprovacao();
+  $("obsInstr").value=currentObj.correcao.obsInstr||"";
+  $("statusShow").value=currentObj.status||"-";
+  recomputeAll();
+
+  show($("editor"), true);
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+function closeEditor(){
+  currentId=null; currentObj=null;
+  $("shotsGrid").innerHTML=""; $("procList").innerHTML=""; $("penList").innerHTML=""; $("repList").innerHTML="";
+  show($("editor"), false);
+}
+function buildShots(rule){
+  const grid=$("shotsGrid"); grid.innerHTML="";
+  for(let i=0;i<rule.shots;i++){
+    const cell=document.createElement("div"); cell.className="shotCell";
+    const lab=document.createElement("label"); lab.textContent=`Tiro ${i+1}`;
+    const sel=document.createElement("select");
+    for(const v of rule.shotOptions){
+      const op=document.createElement("option"); op.value=String(v); op.textContent=String(v); sel.appendChild(op);
+    }
+    sel.value=String(currentObj.correcao.tiros[i] ?? 0);
+    sel.addEventListener("change", ()=>{
+      currentObj.correcao.tiros[i]=Number(sel.value);
+      recomputeAll();
+    });
+    cell.appendChild(lab); cell.appendChild(sel); grid.appendChild(cell);
+  }
+}
+function buildProcedures(rule){
+  const box=$("procList"); box.innerHTML="";
+  for(let i=0;i<rule.procCount;i++){
+    const p=(PROC_MAP[currentObj.tipo]||[])[i];
+    const wrap=document.createElement("div"); wrap.className="checkItem";
+    const cb=document.createElement("input"); cb.type="checkbox";
+    cb.checked=(currentObj.correcao.procedimentosOK[i] ?? true);
+    cb.addEventListener("change", ()=>{ currentObj.correcao.procedimentosOK[i]=cb.checked; recomputeAll(); });
+    const txt=document.createElement("div"); txt.className="txt";
+    txt.innerHTML=`<b>${String(p.n).padStart(2,'0')}. ${p.t}</b><small>${p.d}</small>`;
+    wrap.appendChild(cb); wrap.appendChild(txt); box.appendChild(wrap);
+  }
+}
+function buildPenalties(rule){
+  const box=$("penList"); box.innerHTML="";
+  const marked=new Set(currentObj.correcao.penalidadesMarcadas||[]);
+  for(let i=0;i<PEN.length;i++){
+    const pen=PEN[i];
+    const wrap=document.createElement("div"); wrap.className="checkItem";
+    const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=marked.has(i);
+    cb.addEventListener("change", ()=>{
+      const s=new Set(currentObj.correcao.penalidadesMarcadas||[]);
+      if(cb.checked) s.add(i); else s.delete(i);
+      currentObj.correcao.penalidadesMarcadas=Array.from(s).sort((a,b)=>a-b);
+      recomputeAll();
+    });
+    const txt=document.createElement("div"); txt.className="txt";
+    txt.innerHTML=`<b>${String(pen.n).padStart(2,'0')}. ${pen.t}</b><small>${pen.d} <span style="opacity:.9"> (−${rule.penPts} pts)</span></small>`;
+    wrap.appendChild(cb); wrap.appendChild(txt); box.appendChild(wrap);
+  }
+}
+function buildReprovacao(){
+  const box=$("repList"); box.innerHTML="";
+  const marked=new Set(currentObj.correcao.reprovacaoMarcadas||[]);
+  for(let i=0;i<REP.length;i++){
+    const rp=REP[i];
+    const wrap=document.createElement("div"); wrap.className="checkItem";
+    const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=marked.has(i);
+    cb.addEventListener("change", ()=>{
+      const s=new Set(currentObj.correcao.reprovacaoMarcadas||[]);
+      if(cb.checked) s.add(i); else s.delete(i);
+      currentObj.correcao.reprovacaoMarcadas=Array.from(s).sort((a,b)=>a-b);
+      recomputeAll();
+    });
+    const txt=document.createElement("div"); txt.className="txt";
+    txt.innerHTML=`<b>${String(rp.n).padStart(2,'0')}. ${rp.t}</b><small>${rp.d}</small>`;
+    wrap.appendChild(cb); wrap.appendChild(txt); box.appendChild(wrap);
+  }
+}
+
+function recomputeAll(){
+  const rule=RULES[currentObj.tipo];
+  const A=(currentObj.correcao.tiros||[]).reduce((s,v)=>s+Number(v||0),0);
+  const okCount=(currentObj.correcao.procedimentosOK||[]).filter(Boolean).length;
+  const B=okCount*rule.procPts;
+  const penCount=(currentObj.correcao.penalidadesMarcadas||[]).length;
+  const C=penCount*rule.penPts;
+  const E=A+B-C;
+
+  // nota 0..10 com 3 casas (proporção do máximo)
+  let nota10 = rule.max ? (E/rule.max)*10 : 0;
+  nota10 = clamp(nota10, 0, 10);
+  // reprovação fatal
+  const repFatal=(currentObj.correcao.reprovacaoMarcadas||[]).length>0;
+  const conceito = repFatal ? "REPROVADO" : conceitoPorNota10(nota10);
+
+  currentObj.correcao.A=A; currentObj.correcao.B=B; currentObj.correcao.C=C; currentObj.correcao.E=E;
+  currentObj.correcao.nota10=Number(nota10.toFixed(3));
+  currentObj.correcao.conceito=conceito;
+  currentObj.correcao.reprovadoFatal=repFatal;
+
+  $("pA").value=A; $("pB").value=B; $("pC").value=C; $("pE").value=E;
+  $("nota10").value=currentObj.correcao.nota10.toFixed(3);
+  $("conceito").value=conceito;
+}
+
+async function salvar(validar){
+  if(!currentId||!currentObj) return;
+  currentObj.correcao.obsInstr=safe($("obsInstr").value);
+
+  const patch={ correcao: currentObj.correcao };
+  if(validar){
+    patch.status="FINALIZADO";
+    patch.validadoEm=isoNow();
+    patch.validadoPor=session.user;
+  }else{
+    patch.status="AGUARDANDO_INSTRUTOR";
+  }
+
+  try{
+    await rtdbPatch(`avaliacoes/${currentId}`, patch);
+    const re=currentObj.aluno1?.re;
+    if(re) await rtdbPut(`indexPorRE/${encodeURIComponent(re)}/${currentId}`, true).catch(()=>{});
+    alert(validar ? "✅ Validado." : "✅ Salvo.");
+    $("statusShow").value=patch.status;
+    currentObj.status=patch.status;
+    loadInstrList();
+  }catch(e){
+    console.error(e);
+    alert("Erro ao salvar/validar (Rules/Conexão).");
+  }
+}
+function zerarTiros(){ const rule=RULES[currentObj.tipo]; currentObj.correcao.tiros=Array(rule.shots).fill(0); buildShots(rule); recomputeAll(); }
+function maxTiros(){ const rule=RULES[currentObj.tipo]; const mx=Math.max(...rule.shotOptions); currentObj.correcao.tiros=Array(rule.shots).fill(mx); buildShots(rule); recomputeAll(); }
+function allProc(val){ const rule=RULES[currentObj.tipo]; currentObj.correcao.procedimentosOK=Array(rule.procCount).fill(val); buildProcedures(rule); recomputeAll(); }
+function clearPen(){ currentObj.correcao.penalidadesMarcadas=[]; buildPenalties(RULES[currentObj.tipo]); recomputeAll(); }
+
+// --- IMPRESSÃO: PADRÃO 2 PÁGINAS ---
+
+    async function imprimir(){
+      if(!currentObj || !currentId) return;
+
+      // carrega assinatura do instrutor (se existir)
+      let sig = null;
+      try{
+        sig = await rtdbGet(`config/instrutores/${encodeURIComponent(INSTRUTOR_USER)}/assinatura`);
+      }catch(e){ sig = null; }
+
+      const rule = RULES[currentObj.tipo];
+      const a1 = currentObj.aluno1 || {};
+      const c = currentObj.correcao || {};
+      const procArr = (PROC_MAP[currentObj.tipo]||[]);
+      const penArr  = (PEN_MAP[currentObj.tipo]||[]);
+      const repArr  = (REP_MAP[currentObj.tipo]||[]);
+
+      const esc = (v)=> (v??"").toString()
+        .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+
+      const fmtNota = (n)=>{
+        const x = Number(n||0);
+        return x.toFixed(3).replace(".", ",");
+      };
+
+      // tiros: 44 (pistola) / 22 (12) — mostra em blocos para caber
+      const tiros = Array.isArray(c.tiros) ? c.tiros : [];
+      const tirosPerLine = 11; // 44 => 4 linhas; 22 => 2 linhas
+      const tirosRows = [];
+      for(let i=0;i<tiros.length;i+=tirosPerLine){
+        tirosRows.push(tiros.slice(i,i+tirosPerLine));
+      }
+
+      const procOK = Array.isArray(c.procedimentosOK) ? c.procedimentosOK : [];
+      const penMarked = new Set(Array.isArray(c.penalidadesMarcadas)? c.penalidadesMarcadas : []);
+      const repMarked = new Set(Array.isArray(c.reprovacaoMarcadas)? c.reprovacaoMarcadas : []);
+
+      function rowsChecks(items, getMarkFn){
+        return items.map((it,idx)=>{
+          const mark = getMarkFn(idx);
+          return `
+            <tr>
+              <td class="n">${it.n}</td>
+              <td class="desc">${esc(it.d)}</td>
+              <td class="mk">${mark===true ? "X" : ""}</td>
+              <td class="mk">${mark===false ? "X" : ""}</td>
+            </tr>`;
+        }).join("");
+      }
+
+      function rowsMarked(items, markedSet){
+        return items.map((it,idx)=>{
+          const mk = markedSet.has(idx) ? "X" : "";
+          return `
+            <tr>
+              <td class="n">${it.n}</td>
+              <td class="desc">${esc(it.d)}</td>
+              <td class="mk">${mk}</td>
+            </tr>`;
+        }).join("");
+      }
+
+      const sigImg = sig?.dataUrl
+        ? `<img src="${sig.dataUrl}" style="max-width:240px;max-height:90px;display:block;"/>`
+        : `<div style="font-size:11px;color:#666">Sem assinatura cadastrada</div>`;
+
+      const html = `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"/>
+<title>Súmula ${esc(currentObj.tipo)} • ${esc(a1.re||"")}</title>
+<style>
+  @page { size: A4; margin: 12mm 10mm; }
+  body{ font-family: Arial, Helvetica, sans-serif; color:#111; }
+  .page{ page-break-after: always; }
+  .page:last-child{ page-break-after: auto; }
+  .hdr{ text-align:center; font-weight:700; font-size:13px; margin-bottom:6px; }
+  .subhdr{ text-align:center; font-size:11px; margin-top:-2px; margin-bottom:8px; }
+  .line{ border-top:1px solid #111; margin:6px 0; }
+  .row{ display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+  .f{ border:1px solid #111; padding:6px 8px; font-size:11px; }
+  .k{ font-size:10px; color:#333; }
+  .v{ font-weight:700; margin-top:2px; }
+  table{ width:100%; border-collapse:collapse; font-size:10px; }
+  th,td{ border:1px solid #111; padding:4px 6px; vertical-align:top; }
+  th{ background:#f3f3f3; font-weight:700; }
+  .n{ width:18px; text-align:center; }
+  .mk{ width:46px; text-align:center; font-weight:700; }
+  .desc{ line-height:1.2; }
+  .boxTitle{ font-weight:700; font-size:11px; margin:8px 0 4px; }
+  .mini{ font-size:10px; color:#333; }
+  .tight td{ padding:3px 5px; }
+  .center{ text-align:center; }
+  .sigWrap{ display:flex; gap:14px; align-items:flex-end; justify-content:space-between; margin-top:10px; }
+  .sigBox{ border:1px solid #111; padding:8px; width:58%; min-height:80px;}
+  .sigName{ font-size:10px; margin-top:6px; }
+  .stamp{ border:1px solid #111; padding:8px; width:38%; min-height:80px;}
+</style>
+</head><body>
+
+<div class="page">
+  <div class="hdr">SÚMULA DE AVALIAÇÃO DE PPA – ${esc(currentObj.tipo === "PPA_PISTOLA" ? "PISTOLA .40" : "ESPINGARDA 12")}</div>
+  <div class="subhdr">(modelo digital – impressão em 2 páginas A4)</div>
+  <div class="line"></div>
+
+  <div class="row">
+    <div class="f"><div class="k">DATA</div><div class="v">${esc(currentObj.data||"")}</div></div>
+    <div class="f"><div class="k">LOCAL</div><div class="v">${esc(currentObj.local||"")}</div></div>
+    <div class="f"><div class="k">UNIDADE</div><div class="v">${esc(currentObj.unidade||"")}</div></div>
+    <div class="f"><div class="k">INSTRUTOR</div><div class="v">${esc(INSTRUTOR_USER)}</div></div>
+    <div class="f"><div class="k">ALUNO</div><div class="v">${esc(a1.nome||"")}</div></div>
+    <div class="f"><div class="k">RE</div><div class="v">${esc(a1.re||"")}</div></div>
+    <div class="f"><div class="k">POSTO/GRAD</div><div class="v">${esc(a1.postoGrad||"")}</div></div>
+    <div class="f"><div class="k">Nº DA ARMA</div><div class="v">${esc(a1.armaNumero||"")}</div></div>
+  </div>
+
+  <div class="boxTitle">“A” – PONTOS DOS TIROS (${rule.shots})</div>
+  <table class="tight">
+    <tr>
+      <th class="center">Linha</th>
+      ${Array.from({length:tirosPerLine},(_,i)=>`<th class="center">${i+1}</th>`).join("")}
+      <th class="center">SOMA</th>
+    </tr>
+    ${tirosRows.map((r,ri)=>{
+      const sum = r.reduce((s,v)=>s+Number(v||0),0);
+      return `<tr>
+        <td class="center">${ri+1}</td>
+        ${r.map(v=>`<td class="center">${Number(v||0)}</td>`).join("")}
+        ${Array.from({length:tirosPerLine-r.length},()=>`<td></td>`).join("")}
+        <td class="center"><b>${sum}</b></td>
+      </tr>`;
+    }).join("")}
+    <tr>
+      <td colspan="${tirosPerLine+1}" class="center"><b>TOTAL “A”</b></td>
+      <td class="center"><b>${c.A ?? 0}</b></td>
+    </tr>
+  </table>
+
+  <div class="boxTitle">“B” – PONTOS DOS PROCEDIMENTOS (25 itens – CERTO/ERRADO)</div>
+  <div class="mini">Padrão: CERTO. Desmarque o que estiver ERRADO.</div>
+  <table>
+    <tr><th class="n">#</th><th>Descrição</th><th class="mk">CERTO</th><th class="mk">ERRADO</th></tr>
+    ${rowsChecks(procArr, (idx)=> (procOK[idx] ?? true))}
+  </table>
+</div>
+
+<div class="page">
+  <div class="hdr">CONTINUAÇÃO • SÚMULA • ${esc(a1.re||"")}</div>
+  <div class="line"></div>
+
+  <div class="boxTitle">“C” – PENALIDADES (marcar se ocorrer)</div>
+  <table>
+    <tr><th class="n">#</th><th>Descrição</th><th class="mk">X</th></tr>
+    ${rowsMarked(penArr, penMarked)}
+  </table>
+
+  <div class="boxTitle">“D” – REPROVAÇÃO (marcar se ocorrer)</div>
+  <table>
+    <tr><th class="n">#</th><th>Descrição</th><th class="mk">X</th></tr>
+    ${rowsMarked(repArr, repMarked)}
+  </table>
+
+  <div class="boxTitle">RESULTADO</div>
+  <table>
+    <tr><th>MÁXIMO</th><th>“A”</th><th>“B”</th><th>“C”</th><th>“E”</th><th>NOTA (0–10)</th><th>CONCEITO</th><th>STATUS</th></tr>
+    <tr>
+      <td class="center">${rule.max}</td>
+      <td class="center">${c.A ?? 0}</td>
+      <td class="center">${c.B ?? 0}</td>
+      <td class="center">${c.C ?? 0}</td>
+      <td class="center">${c.E ?? 0}</td>
+      <td class="center"><b>${fmtNota(c.nota10 ?? 0)}</b></td>
+      <td class="center">${esc(c.conceito ?? "")}</td>
+      <td class="center">${esc(currentObj.status||"")}</td>
+    </tr>
+  </table>
+
+  <div class="boxTitle">OBSERVAÇÕES</div>
+  <div style="border:1px solid #111; min-height:60px; padding:8px; font-size:11px;">${esc(c.obsInstr||"")}</div>
+
+  <div class="sigWrap">
+    <div class="sigBox">
+      <div class="k">ASSINATURA DO INSTRUTOR</div>
+      ${sigImg}
+      <div class="sigName">${esc(sig?.nomeExibido || "")}</div>
+    </div>
+    <div class="stamp">
+      <div class="k">CIENTE DO ALUNO</div>
+      <div style="margin-top:42px; border-top:1px solid #111;"></div>
+      <div class="k" style="margin-top:6px;">ASSINATURA</div>
+    </div>
+  </div>
+
+</div>
+
+</body></html>`;
+
+      const w = window.open("", "_blank");
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+
+      // imprime quando estiver pronto (aguarda carregamento da assinatura se houver)
+      w.onload = ()=>{
+        const imgs = Array.from(w.document.images||[]);
+        if(imgs.length){
+          const img = imgs[0];
+          if(img.complete) { w.focus(); w.print(); return; }
+          img.onload = ()=>{ w.focus(); w.print(); };
+          img.onerror = ()=>{ w.focus(); w.print(); };
+          // fallback
+          setTimeout(()=>{ try{w.focus();w.print();}catch(e){} }, 900);
+        }else{
+          w.focus(); w.print();
+        }
+      };
+    }
+  }catch(e){
+    $("sigPreview").style.display="none";
+    $("sigEmpty").style.display="";
+    $("sigInfo").value="Erro ao ler assinatura (Rules?).";
+  }
+}
+function compressToDataUrl(file,maxW=900,maxH=300,quality=0.85){
+  return new Promise((resolve,reject)=>{
+    const img=new Image(); const fr=new FileReader();
+    fr.onload=()=>{
+      img.onload=()=>{
+        let w=img.width,h=img.height;
+        const ratio=Math.min(maxW/w,maxH/h,1);
+        w=Math.round(w*ratio); h=Math.round(h*ratio);
+        const c=document.createElement("canvas"); c.width=w; c.height=h;
+        const ctx=c.getContext("2d"); ctx.clearRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
+        const isPng=file.type==="image/png";
+        const dataUrl=isPng?c.toDataURL("image/png"):c.toDataURL("image/jpeg",quality);
+        resolve(dataUrl);
+      };
+      img.onerror=reject;
+      img.src=fr.result;
+    };
+    fr.onerror=reject;
+    fr.readAsDataURL(file);
+  });
+}
+async function onSigFile(){
+  const f=$("sigFile").files?.[0]; if(!f) return;
+  sigTempDataUrl=await compressToDataUrl(f);
+  $("sigPreview").src=sigTempDataUrl;
+  $("sigPreview").style.display="";
+  $("sigEmpty").style.display="none";
+  $("sigInfo").value=JSON.stringify({preview:"ok", bytesAprox:Math.round(sigTempDataUrl.length*0.75)},null,2);
+}
+async function salvarSig(){
+  if(!sigTempDataUrl){
+    const cur=await rtdbGet(`config/instrutores/${encodeURIComponent(INSTRUTOR_USER)}/assinatura`).catch(()=>null);
+    if(!cur?.dataUrl) return alert("Selecione um arquivo de assinatura.");
+    sigTempDataUrl=cur.dataUrl;
+  }
+  const nome=safe($("sigNome").value)||INSTRUTOR_USER;
+  const bytes=Math.round(sigTempDataUrl.length*0.75);
+  if(bytes>250000) return alert("Assinatura muito grande. Use PNG/JPG menor.");
+  const payload={atualizadoEm:isoNow(), dataUrl:sigTempDataUrl, nomeExibido:nome};
+  try{
+    await rtdbPut(`config/instrutores/${encodeURIComponent(INSTRUTOR_USER)}/assinatura`, payload);
+    alert("✅ Assinatura salva.");
+    sigTempDataUrl=null; $("sigFile").value="";
+    loadSig();
+  }catch(e){ console.error(e); alert("Erro ao salvar assinatura (Rules?)."); }
+}
+async function apagarSig(){
+  if(!confirm("Apagar assinatura salva?")) return;
+  try{
+    await rtdbDelete(`config/instrutores/${encodeURIComponent(INSTRUTOR_USER)}/assinatura`);
+    alert("✅ Apagada.");
+    $("sigFile").value=""; sigTempDataUrl=null; loadSig();
+  }catch(e){ console.error(e); alert("Erro ao apagar (Rules?)."); }
+}
+
+async function init(){
+      // IMPORTANTE: se abrir via file:// o browser bloqueia fetch (CORS). Use start_server.bat.
+      if(location.protocol === "file:"){
+        setBadge("ABRA VIA SERVIDOR (start_server.bat)", false);
+        return;
+      }
+      try{
+        await rtdbGet("config");
+        setBadge("ONLINE (RTDB REST)", true);
+      }catch(e){
+        console.error(e);
+        setBadge("OFFLINE / RULES BLOQUEANDO", false);
+      }
+    }
+
+window.addEventListener("DOMContentLoaded", ()=>{
+  init();
+  $("btnLogin").addEventListener("click", login);
+  $("btnLogout").addEventListener("click", logout);
+  $("btnDemoAluno").addEventListener("click", ()=>{ $("loginUser").value="123456-7"; $("loginPass").value="1234"; });
+  $("btnDemoInstr").addEventListener("click", ()=>{ $("loginUser").value="Fenille"; $("loginPass").value="140965"; });
+  $("btnConsultar").addEventListener("click", consultarRE);
+
+  $("tabAluno").addEventListener("click", openAluno);
+  $("tabInstr").addEventListener("click", openInstr);
+  $("tabSig").addEventListener("click", openSig);
+  $("btnFecharDossie").addEventListener("click", ()=>{ show($("viewDossie"),false); });
+
+  $("aRE").addEventListener("change", ()=>onREChange(false));
+  $("aRE").addEventListener("blur", ()=>onREChange(true));
+
+  $("btnEnviar").addEventListener("click", enviarCabecalho);
+
+  $("btnZerarTiros").addEventListener("click", zerarTiros);
+  $("btnMaxTiros").addEventListener("click", maxTiros);
+  $("btnAllProcOK").addEventListener("click", ()=>allProc(true));
+  $("btnAllProcErr").addEventListener("click", ()=>allProc(false));
+  $("btnClearPen").addEventListener("click", clearPen);
+
+  $("btnSalvar").addEventListener("click", ()=>salvar(false));
+  $("btnValidar").addEventListener("click", ()=>salvar(true));
+  $("btnImprimir").addEventListener("click", imprimir);
+  $("btnFecharEditor").addEventListener("click", closeEditor);
+
+  $("sigFile").addEventListener("change", onSigFile);
+  $("btnSalvarSig").addEventListener("click", salvarSig);
+  $("btnApagarSig").addEventListener("click", apagarSig);
+});
+</script>
+</body></html>
