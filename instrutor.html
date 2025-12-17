@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RITE • Instrutor</title>
+<style>
+:root{
+  --y:#ffff00; --yn:#f9ff7a; --bg:#000; --bg2:#050509;
+  --card:rgba(10,10,15,.96); --bd:rgba(255,255,0,.18);
+  --mut:#cfcfcf; --sh:0 14px 40px rgba(0,0,0,.85); --r:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:var(--y);
+  background:radial-gradient(circle at top,#202020 0,var(--bg2) 52%,var(--bg) 100%);
+}
+.wrap{max-width:1200px;margin:0 auto;padding:14px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:14px 16px;border:1px solid var(--bd);border-radius:18px;
+  background:linear-gradient(180deg,rgba(10,10,15,.96),rgba(5,5,9,.92));
+  box-shadow:var(--sh);
+}
+h1{margin:0;font-size:18px;letter-spacing:.6px}
+.sub{color:var(--mut);font-size:12px;margin-top:4px}
+.badge{padding:8px 10px;border-radius:999px;font-weight:900;font-size:12px;white-space:nowrap;
+  background:rgba(255,255,0,.16);color:var(--y);border:1px solid rgba(255,255,0,.25);
+}
+.badge.ok{background:var(--y);color:#0b0b10;border:1px solid rgba(0,0,0,.2)}
+.grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+@media(min-width:920px){.grid{grid-template-columns:420px 1fr}}
+
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;box-shadow:var(--sh);padding:14px}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,0,.22);background:rgba(0,0,0,.25);font-size:12px;color:var(--mut);
+}
+.sep{height:1px;background:rgba(255,255,0,.14);margin:12px 0}
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+.field{grid-column:span 12;display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--mut)}
+input,select,textarea{width:100%;border-radius:12px;border:1px solid rgba(255,255,0,.22);
+  background:rgba(0,0,0,.35);color:var(--y);padding:10px 12px;outline:none;
+}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(255,255,0,.28);background:rgba(0,0,0,.35)}
+/* Evita “branco” do autofill do Chrome */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus{
+  -webkit-text-fill-color: var(--y) !important;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(0,0,0,.35) inset !important;
+  box-shadow: 0 0 0px 1000px rgba(0,0,0,.35) inset !important;
+  transition: background-color 9999s ease-out 0s;
+}
+select{
+  appearance:none;-webkit-appearance:none;-moz-appearance:none;
+  background-color:rgba(0,0,0,.35);
+  padding-right:34px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--y) 50%),
+    linear-gradient(135deg, var(--y) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 4px),
+    calc(100% - 12px) calc(50% - 4px);
+  background-size:6px 6px, 6px 6px;
+  background-repeat:no-repeat;
+}
+option{color:#000;background:#fff;}
+textarea{min-height:86px;resize:vertical}
+
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+button{border:0;border-radius:14px;padding:10px 14px;font-weight:900;cursor:pointer;
+  background:rgba(255,255,0,.14);color:var(--y);border:1px solid rgba(255,255,0,.28);
+}
+button.primary{background:var(--y);color:#0b0b10;border:1px solid rgba(0,0,0,.2)}
+button.danger{background:rgba(255,60,60,.14);border-color:rgba(255,60,60,.35);color:#ffd3d3}
+.muted{color:var(--mut);font-size:12px}
+.list{display:grid;gap:10px}
+.item{padding:12px;border-radius:16px;border:1px solid rgba(255,255,0,.18);background:rgba(0,0,0,.25);
+  display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+}
+.item b{color:var(--y)}
+.right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.kpi{display:flex;gap:10px;flex-wrap:wrap}
+.kpi .pill{color:var(--yn)}
+.tabs{display:flex;gap:10px;flex-wrap:wrap}
+
+.shotsGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media(min-width:920px){.shotsGrid{grid-template-columns:repeat(10,minmax(0,1fr));}}
+.shotCell{border:1px solid rgba(255,255,0,.18);background:rgba(0,0,0,.25);border-radius:12px;padding:8px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.shotCell label{font-size:11px;color:var(--mut)}
+.shotCell select{padding:10px 10px;border-radius:10px;font-weight:900;text-align:center}
+
+.checks{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:920px){.checks{grid-template-columns:1fr 1fr}}
+.checkItem{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;
+  border:1px solid rgba(255,255,0,.16);background:rgba(0,0,0,.22);
+}
+.checkItem input[type="checkbox"]{width:auto;margin-top:3px}
+.checkItem .txt{display:flex;flex-direction:column;gap:3px}
+.checkItem .txt b{font-size:13px}
+.checkItem .txt small{color:var(--mut);font-size:12px;line-height:1.25}
+
+.penQty{display:flex;gap:8px;align-items:center;margin-left:auto}
+.penBadge{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,0,.22);background:rgba(0,0,0,.25);font-size:12px;color:var(--yn);min-width:54px;text-align:center}
+.tiny{padding:7px 10px;border-radius:12px;font-size:12px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:12px;z-index:9999}
+.modal .box{width:min(980px,100%);max-height:92vh;overflow:auto;background:rgba(10,10,15,.98);border:1px solid rgba(255,255,0,.22);border-radius:18px;box-shadow:var(--sh);padding:14px}
+.modal .head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.modal .head .pill{color:var(--yn)}
+
+.sumula{background:#fff;color:#111;border-radius:12px;padding:0;margin-top:12px}
+.page{padding:18px 18px 14px 18px;border-bottom:1px dashed #bbb}
+.page:last-child{border-bottom:none}
+.s-title{font-weight:900;text-align:center;letter-spacing:.4px}
+.s-sub{text-align:center;font-size:12px;color:#333;margin-top:4px}
+.s-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.s-line{border:1px solid #333;padding:8px;font-size:12px}
+.s-line b{display:block;font-size:11px;color:#333;margin-bottom:3px}
+.s-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.s-table td,.s-table th{border:1px solid #333;padding:6px;vertical-align:top}
+.s-table th{background:#f2f2f2}
+.sig{display:flex;gap:14px;align-items:flex-end;justify-content:space-between;margin-top:16px}
+.sig img{max-width:320px;height:auto;border:1px solid #333;padding:6px}
+.sig .block{flex:1;font-size:11px}
+.sig .line{border-top:1px solid #333;margin-top:30px;padding-top:4px}
+
+@media print {
+  body{background:#fff;color:#111}
+  .wrap,.top,.grid,.card,.modal{display:none!important}
+  #printArea{display:block!important}
+  #printArea .page{page-break-after:always}
+  #printArea .page:last-child{page-break-after:auto}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>RITE • Súmulas de Tiro</h1>
+      <div class="sub">Painel do Instrutor • Lista / Pesquisa / Correção / Validação</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div id="badge" class="badge">OFFLINE</div>
+      <button class="danger" id="btnLogout">Sair</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="pill">🔎 Consulta por RE</div>
+      <div class="muted" style="margin-top:8px">Mostra todas as avaliações do RE e permite visualizar a súmula.</div>
+      <div class="row" style="margin-top:10px">
+        <div class="field" style="grid-column:span 8">
+          <label>RE</label>
+          <input id="consultaRE" placeholder="Ex.: 123456-7">
+        </div>
+        <div class="field" style="grid-column:span 4;align-self:end">
+          <button class="primary" id="btnConsultar">Consultar</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="list" id="consultaList"></div>
+
+      <div class="sep"></div>
+      <div class="muted">Instrutor logado: <b id="userLogado">-</b></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+        <div>
+          <div class="pill">🧑‍🏫 Painel do Instrutor</div>
+          <div class="muted" style="margin-top:6px">Carrega as últimas 50 avaliações.</div>
+        </div>
+        <div class="tabs">
+          <button class="tiny" id="btnRecarregar">Recarregar</button>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+      <div class="kpi">
+        <span class="pill" id="kpiTotal">Total: 0</span>
+        <span class="pill" id="kpiAguard">Aguardando: 0</span>
+        <span class="pill" id="kpiFinal">Finalizados: 0</span>
+      </div>
+
+      <div class="sep"></div>
+      <div class="row">
+        <div class="field" style="grid-column:span 12">
+          <label>Filtros e ações</label>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <label class="pill" style="cursor:pointer">
+              <input id="hideFinalizados" type="checkbox" checked style="width:auto;margin:0 6px 0 0"> Ocultar finalizados
+            </label>
+            <button id="btnLimparFinalizados" class="tiny">Retirar finalizados da tela</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+      <div class="list" id="instrList"></div>
+
+      <div class="sep"></div>
+
+      <div id="editor" style="display:none;">
+        <div class="pill">✍️ Correção</div>
+        <div class="muted" id="edHeader" style="margin-top:8px"></div>
+
+        <div class="sep"></div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div class="pill">① Tiros (1 por 1)</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="tiny" id="btnZerarTiros">Zerar</button>
+            <button class="tiny" id="btnMaxTiros">Máximo</button>
+          </div>
+        </div>
+        <div class="muted" id="shotsHelp" style="margin:8px 0 10px 0"></div>
+        <div class="shotsGrid" id="shotsGrid"></div>
+
+        <div class="sep"></div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div class="pill">② Procedimentos (25)</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="tiny" id="btnAllProcOK">Todos corretos</button>
+            <button class="tiny" id="btnAllProcErr">Todos errados</button>
+          </div>
+        </div>
+        <div class="muted" style="margin:8px 0 10px 0">Padrão: todos corretos. Desmarque o que estiver errado.</div>
+        <div class="checks" id="procList"></div>
+
+        <div class="sep"></div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div class="pill">③ Penalidades (quantidade)</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="tiny" id="btnClearPen">Limpar</button>
+          </div>
+        </div>
+        <div class="muted" style="margin:8px 0 10px 0">
+          Clique em <b>Marcar</b> e informe <b>?x</b>. Ex.: “Disparo a mais” 3 vezes → ?x = 3.
+        </div>
+        <div class="checks" id="penList"></div>
+
+        <div class="sep"></div>
+
+        <div class="pill">④ Reprovação (penalidades fatais)</div>
+        <div class="muted" style="margin:8px 0 10px 0">Marque as que ocorreram (se marcar qualquer uma, status sugere “REPROVADO”).</div>
+        <div class="checks" id="repList"></div>
+
+        <div class="sep"></div>
+
+        <div class="pill">📌 Resultado automático</div>
+        <div class="row" style="margin-top:10px">
+          <div class="field" style="grid-column:span 3">
+            <label>A (Tiros)</label>
+            <input id="pA" disabled />
+          </div>
+          <div class="field" style="grid-column:span 3">
+            <label>B (Proced.)</label>
+            <input id="pB" disabled />
+          </div>
+          <div class="field" style="grid-column:span 3">
+            <label>C (Penal.)</label>
+            <input id="pC" disabled />
+          </div>
+          <div class="field" style="grid-column:span 3">
+            <label>E = A + B − C</label>
+            <input id="pE" disabled />
+          </div>
+          <div class="field" style="grid-column:span 4">
+            <label>Nota (0–350, 3 casas)</label>
+            <input id="nota" disabled />
+          </div>
+          <div class="field" style="grid-column:span 4">
+            <label>Conceito</label>
+            <input id="conceito" disabled />
+          </div>
+          <div class="field" style="grid-column:span 4">
+            <label>Status</label>
+            <input id="statusShow" disabled />
+          </div>
+
+          <div class="field">
+            <label>Observações do instrutor</label>
+            <textarea id="obsInstr" placeholder="..."></textarea>
+          </div>
+        </div>
+
+        <div class="btns">
+          <button class="primary" id="btnSalvar">Salvar</button>
+          <button id="btnValidar">VALIDAR</button>
+          <button id="btnVerSumula">Ver Súmula</button>
+          <button id="btnFecharEditor">Fechar</button>
+        </div>
+        <div class="muted" style="margin-top:8px">
+          No celular: <b>Ver Súmula</b> (visualização). No desktop: dentro da súmula aparece o botão <b>Imprimir / Salvar PDF</b>.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="box">
+    <div class="head">
+      <div>
+        <div class="pill" id="modalTitle">📄 Súmula</div>
+        <div class="muted" id="modalSub"></div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">
+        <button id="btnPrint" class="primary">Imprimir / Salvar PDF</button>
+        <button id="btnCloseModal" class="danger">Fechar</button>
+      </div>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div id="printArea" style="display:none"></div>
+
+<script>
+const DATABASE_URL = "https://rite-fa75b-default-rtdb.firebaseio.com";
+const INSTRUTOR_USER = "Fenille";
+
+const TEXTOS = {
+  PPA_PISTOLA: {
+    proc: Array.from({length:25}, (_,i)=>`Procedimento ${String(i+1).padStart(2,"0")}`),
+    pen:  Array.from({length:11}, (_,i)=>`Penalidade ${String(i+1).padStart(2,"0")}`),
+    rep:  ["Descontrole emocional","Normas de segurança","Dificuldade no manejo","Disparo fora do barranco","Disparo acidental","Derrubar a arma"],
+  },
+  PPA_ESP12: {
+    proc: Array.from({length:25}, (_,i)=>`Procedimento ${String(i+1).padStart(2,"0")}`),
+    pen:  Array.from({length:11}, (_,i)=>`Penalidade ${String(i+1).padStart(2,"0")}`),
+    rep:  ["Descontrole emocional","Normas de segurança","Dificuldade no manejo","Disparo fora do barranco","Disparo acidental","Derrubar a arma"],
+  },
+};
+const RULES = {
+  PPA_PISTOLA: { max: 350, shots: 44, shotOptions: [0,5,10], procCount: 25, procPts: 10, penPts: 10 },
+  PPA_ESP12:   { max: 350, shots: 22, shotOptions: [0,10,20], procCount: 25, procPts: 10, penPts: 10 },
+};
+
+const $=(id)=>document.getElementById(id);
+const safe=(s)=>(s??"").toString().trim();
+const isoNow=()=> new Date().toISOString();
+const isDesktop=()=> window.matchMedia("(min-width: 920px)").matches;
+
+function setBadge(text, ok){ const b=$("badge"); b.textContent=text; b.classList.toggle("ok", !!ok); }
+
+async function rtdbGet(path, query="") {
+  const url = `${DATABASE_URL}/${path}.json${query}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbPut(path, data){
+  const url = `${DATABASE_URL}/${path}.json`;
+  const res = await fetch(url, {method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)});
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbPatch(path, data){
+  const url = `${DATABASE_URL}/${path}.json`;
+  const res = await fetch(url, {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)});
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbDelete(path){
+  const url = `${DATABASE_URL}/${path}.json`;
+  const res = await fetch(url, {method:"DELETE"});
+  if(!res.ok) throw new Error(await res.text());
+  return true;
+}
+
+/*************** SESSION ***************/
+let session=null; // {role:'instrutor', user}
+function logout(){ sessionStorage.removeItem("rite_session"); location.href="index.html"; }
+function requireInstrutor(){
+  try{
+    const s = JSON.parse(sessionStorage.getItem("rite_session")||"null");
+    if(!s || s.role!=="instrutor") throw new Error("no session");
+    session=s;
+    $("userLogado").textContent = s.user;
+    window.scrollTo({top:0, behavior:"instant"});
+  }catch(e){ location.href="index.html"; }
+}
+
+/*************** CONSULTA POR RE ***************/
+async function consultarRE(){
+  const re=safe($("consultaRE").value);
+  if(!re) return alert("Digite um RE.");
+  $("consultaList").innerHTML = `<div class="muted">Consultando…</div>`;
+  try{
+    const idx = await rtdbGet(`indexPorRE/${encodeURIComponent(re)}`);
+    if(!idx){ $("consultaList").innerHTML=`<div class="muted">Nenhum registro para esse RE.</div>`; return; }
+    const ids = Object.keys(idx);
+    const reads = await Promise.all(ids.map(id => rtdbGet(`avaliacoes/${id}`)));
+    const items = reads.map((v,i)=> (v ? ({id:ids[i], ...v}) : null))
+      .filter(Boolean)
+      .sort((a,b)=> (b.criadoEm||"").localeCompare(a.criadoEm||""));
+
+    $("consultaList").innerHTML="";
+    for(const it of items){
+      const nome = it.aluno1?.nome || "(sem nome)";
+      const tipo = it.tipo || "-";
+      const data = it.data || "-";
+      const st = it.status || "-";
+      const E = it.correcao?.E ?? 0;
+      const conc = it.correcao?.conceito ?? "-";
+
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div>
+          <div><b>${nome}</b> • ${tipo}</div>
+          <div class="muted">${data} • <span style="color:${st==='FINALIZADO'?'#a8ffb0':'#fff0a8'}">${st}</span></div>
+        </div>
+        <div class="right">
+          <span class="pill">E: ${E}</span>
+          <span class="pill">${conc}</span>
+          <button class="tiny">Ver</button>
+        </div>
+      `;
+      div.querySelector("button").addEventListener("click", ()=> openSumulaModal(it.id, it, "consulta"));
+      $("consultaList").appendChild(div);
+    }
+  }catch(e){
+    console.error(e);
+    $("consultaList").innerHTML = `<div class="muted">Erro na consulta. (Veja o console F12.)</div>`;
+  }
+}
+
+/*************** INSTRUTOR LISTA ***************/
+let removedFinalizados = new Set();
+
+async function loadInstrList(){
+  $("instrList").innerHTML = `<div class="muted">Carregando…</div>`;
+  try{
+    const data = await rtdbGet("avaliacoes", `?orderBy="$key"&limitToLast=50`);
+    const ids = data ? Object.keys(data) : [];
+    const itemsAll = ids.map(id => (data[id] ? ({id, ...data[id]}) : null)).filter(Boolean)
+      .filter(x=>x && x.tipo)
+      .sort((a,b)=> (b.criadoEm||"").localeCompare(a.criadoEm||""));
+
+    let total=itemsAll.length, aguard=0, fin=0;
+    for(const it of itemsAll){ if(it.status==="AGUARDANDO_INSTRUTOR") aguard++; if(it.status==="FINALIZADO") fin++; }
+
+    $("kpiTotal").textContent=`Total: ${total}`;
+    $("kpiAguard").textContent=`Aguardando: ${aguard}`;
+    $("kpiFinal").textContent=`Finalizados: ${fin}`;
+
+    const hide = $("hideFinalizados").checked;
+    let viewItems = itemsAll.filter(it => !removedFinalizados.has(it.id));
+    if(hide) viewItems = viewItems.filter(x=>x.status!=="FINALIZADO");
+
+    $("instrList").innerHTML = "";
+    if(viewItems.length===0){ $("instrList").innerHTML = `<div class="muted">Sem itens para mostrar.</div>`; return; }
+
+    for(const it of viewItems){
+      const nome=it.aluno1?.nome||"(sem nome)";
+      const re=it.aluno1?.re||"-";
+      const tipo=it.tipo||"-";
+      const dataS=it.data||"-";
+      const st=it.status||"-";
+      const E=it.correcao?.E ?? 0;
+
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML=`
+        <div>
+          <div><b>${nome}</b> • RE ${re}</div>
+          <div class="muted">${tipo} • ${dataS} • <span style="color:${st==='FINALIZADO'?'#a8ffb0':'#fff0a8'}">${st}</span></div>
+        </div>
+        <div class="right">
+          <span class="pill">E: ${E}</span>
+          <button class="tiny" data-id="${it.id}">Abrir</button>
+          <button class="tiny danger" data-del="${it.id}">Excluir</button>
+        </div>
+      `;
+      div.querySelector("button[data-id]").addEventListener("click", ()=> openEditor(it.id, it));
+      div.querySelector("button[data-del]").addEventListener("click", ()=> excluirAvaliacao(it.id, it));
+      $("instrList").appendChild(div);
+    }
+  }catch(e){
+    console.error(e);
+    $("instrList").innerHTML = `<div class="muted">Erro ao carregar. (Veja console F12.)</div>`;
+  }
+}
+
+async function excluirAvaliacao(id, it){
+  if(!confirm("Excluir esta avaliação?")) return;
+  try{
+    await rtdbDelete(`avaliacoes/${id}`);
+    const re = it?.aluno1?.re;
+    if(re) {
+      await rtdbDelete(`indexPorRE/${encodeURIComponent(re)}/${id}`);
+    }
+    removedFinalizados.add(id);
+    await loadInstrList();
+    alert("✅ Excluída.");
+  }catch(e){ console.error(e); alert("Erro ao excluir. Veja console F12."); }
+}
+
+function conceitoPorNota(n){
+  const pct = (n/350)*100;
+  if (pct <= 49) return "Insuficiente";
+  if (pct <= 69) return "Regular";
+  if (pct <= 84) return "Bom";
+  if (pct <= 95) return "Muito bom";
+  return "Excepcional";
+}
+
+let currentId=null;
+let currentObj=null;
+
+function openEditor(id, it){
+  currentId=id;
+  currentObj=it;
+  const rule = RULES[currentObj.tipo];
+  if(!rule) return alert("Tipo não suportado: "+currentObj.tipo);
+
+  if(!currentObj.correcao) currentObj.correcao={};
+  if(!Array.isArray(currentObj.correcao.tiros) || currentObj.correcao.tiros.length!==rule.shots){
+    currentObj.correcao.tiros = Array(rule.shots).fill(0);
+  }
+  if(!Array.isArray(currentObj.correcao.procedimentosOK) || currentObj.correcao.procedimentosOK.length!==rule.procCount){
+    currentObj.correcao.procedimentosOK = Array(rule.procCount).fill(true);
+  }
+  if(!currentObj.correcao.penalidadesQtd || typeof currentObj.correcao.penalidadesQtd!=="object") {
+    currentObj.correcao.penalidadesQtd = {};
+  }
+  if(!Array.isArray(currentObj.correcao.reprovacao)) {
+    currentObj.correcao.reprovacao = Array(TEXTOS[currentObj.tipo].rep.length).fill(false);
+  }
+
+  $("edHeader").textContent = `ID ${id} • ${currentObj.tipo} • ${currentObj.data||"-"} • ${currentObj.aluno1?.nome||"-"} (RE ${currentObj.aluno1?.re||"-"})`;
+
+  $("shotsHelp").textContent = currentObj.tipo==="PPA_PISTOLA"
+    ? `Pistola: ${rule.shots} tiros • valores: ${rule.shotOptions.join(", ")}`
+    : `Espingarda 12: ${rule.shots} tiros • valores: ${rule.shotOptions.join(", ")}`;
+
+  buildShots(rule);
+  buildProcedures(rule);
+  buildPenalties(rule);
+  buildReprovacao();
+
+  $("obsInstr").value = currentObj.correcao.obsInstr || "";
+  $("statusShow").value = currentObj.status || "-";
+  recomputeAll();
+  $("editor").style.display="";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function closeEditor(){ currentId=null; currentObj=null; $("editor").style.display="none"; }
+
+function buildShots(rule){
+  const grid=$("shotsGrid");
+  grid.innerHTML="";
+  for(let i=0;i<rule.shots;i++){ 
+    const cell=document.createElement("div");
+    cell.className="shotCell";
+    cell.innerHTML = `<label>Tiro ${i+1}</label>`;
+    const sel=document.createElement("select");
+    for(const v of rule.shotOptions){
+      const op=document.createElement("option");
+      op.value=String(v); op.textContent=String(v);
+      sel.appendChild(op);
+    }
+    sel.value=String(currentObj.correcao.tiros[i] ?? 0);
+    sel.addEventListener("change", ()=>{ currentObj.correcao.tiros[i]=Number(sel.value); recomputeAll(); });
+    cell.appendChild(sel);
+    grid.appendChild(cell);
+  }
+}
+
+function buildProcedures(rule){
+  const box=$("procList"); box.innerHTML="";
+  const arr = TEXTOS[currentObj.tipo].proc;
+  for(let i=0;i<rule.procCount;i++){ 
+    const wrap=document.createElement("div");
+    wrap.className="checkItem";
+    const cb=document.createElement("input");
+    cb.type="checkbox";
+    cb.checked = (currentObj.correcao.procedimentosOK[i] ?? true);
+    cb.addEventListener("change", ()=>{ currentObj.correcao.procedimentosOK[i]=cb.checked; recomputeAll(); });
+    const txt=document.createElement("div");
+    txt.className="txt";
+    txt.innerHTML = `<b>Procedimento ${String(i+1).padStart(2,"0")}</b><small>${arr[i]||""}</small>`;
+    wrap.appendChild(cb); wrap.appendChild(txt);
+    box.appendChild(wrap);
+  }
+}
+
+function buildPenalties(rule){
+  const box=$("penList"); box.innerHTML="";
+  const arr = TEXTOS[currentObj.tipo].pen;
+  const qtd = currentObj.correcao.penalidadesQtd || {};
+  for(let i=0;i<arr.length;i++){ 
+    const wrap=document.createElement("div");
+    wrap.className="checkItem";
+    const txt=document.createElement("div");
+    txt.className="txt";
+    txt.innerHTML = `<b>Penalidade ${String(i+1).padStart(2,"0")}</b><small>${arr[i]||""} <br><i>10 pontos negativos por ocorrência.</i></small>`;
+    const right=document.createElement("div");
+    right.className="penQty";
+    const badge=document.createElement("div");
+    const cur = Number(qtd[i]||0);
+    badge.className="penBadge";
+    badge.textContent = cur>0 ? `x${cur}` : "—";
+    const btn=document.createElement("button");
+    btn.className="tiny";
+    btn.textContent = "Marcar";
+    btn.addEventListener("click", ()=>{
+      const curv = Number(currentObj.correcao.penalidadesQtd[i]||0);
+      const ans = prompt(`Penalidade ${String(i+1).padStart(2,"0")}\nQuantas vezes (?x)?`, String(curv||0));
+      if(ans===null) return;
+      let n = parseInt(ans,10);
+      if(Number.isNaN(n) || n<0) n=0;
+      if(n===0) delete currentObj.correcao.penalidadesQtd[i];
+      else currentObj.correcao.penalidadesQtd[i]=n;
+      buildPenalties(rule);
+      recomputeAll();
+    });
+    right.appendChild(badge);
+    right.appendChild(btn);
+    wrap.appendChild(txt);
+    wrap.appendChild(right);
+    box.appendChild(wrap);
+  }
+}
+
+function buildReprovacao(){
+  const box=$("repList"); box.innerHTML="";
+  const arr = TEXTOS[currentObj.tipo].rep;
+  for(let i=0;i<arr.length;i++){ 
+    const wrap=document.createElement("div");
+    wrap.className="checkItem";
+    const cb=document.createElement("input");
+    cb.type="checkbox";
+    cb.checked = !!currentObj.correcao.reprovacao[i];
+    cb.addEventListener("change", ()=>{ currentObj.correcao.reprovacao[i]=cb.checked; recomputeAll(); });
+    const txt=document.createElement("div");
+    txt.className="txt";
+    txt.innerHTML = `<b>Reprovação ${String(i+1).padStart(2,"0")}</b><small>${arr[i]||""}</small>`;
+    wrap.appendChild(cb); wrap.appendChild(txt);
+    box.appendChild(wrap);
+  }
+}
+
+function recomputeAll(){
+  const rule = RULES[currentObj.tipo];
+  const A = (currentObj.correcao.tiros||[]).reduce((s,v)=> s+Number(v||0), 0);
+  const okCount = (currentObj.correcao.procedimentosOK||[]).filter(Boolean).length;
+  const B = okCount * rule.procPts;
+
+  const qtd = currentObj.correcao.penalidadesQtd || {};
+  let penCount = 0;
+  for(const k in qtd) penCount += Number(qtd[k]||0);
+  const C = penCount * rule.penPts;
+
+  const E = A + B - C;
+  const nota = Math.max(0, Math.min(rule.max, E));
+  const conc = conceitoPorNota(nota);
+
+  currentObj.correcao.A=A; currentObj.correcao.B=B; currentObj.correcao.C=C; currentObj.correcao.E=E;
+  currentObj.correcao.nota=Number(nota.toFixed(3));
+  currentObj.correcao.conceito=conc;
+
+  const reprov = (currentObj.correcao.reprovacao||[]).some(Boolean);
+  const sug = reprov ? "REPROVADO" : (currentObj.status || "AGUARDANDO_INSTRUTOR");
+
+  $("pA").value=A;
+  $("pB").value=B;
+  $("pC").value=C;
+  $("pE").value=E;
+  $("nota").value = currentObj.correcao.nota.toFixed(3);
+  $("conceito").value = conc;
+  $("statusShow").value = sug;
+}
+
+async function salvar(validar){
+  if(!currentId||!currentObj) return;
+  currentObj.correcao.obsInstr = safe($("obsInstr").value);
+
+  const reprov = (currentObj.correcao.reprovacao||[]).some(Boolean);
+  const patch={ correcao: currentObj.correcao };
+  if(validar){
+    patch.status = reprov ? "REPROVADO" : "FINALIZADO";
+    patch.validadoEm = isoNow();
+    patch.validadoPor = session.user;
+  } else {
+    patch.status = "AGUARDANDO_INSTRUTOR";
+  }
+
+  try{
+    await rtdbPatch(`avaliacoes/${currentId}`, patch);
+    const re = currentObj.aluno1?.re;
+    if(re) await rtdbPut(`indexPorRE/${encodeURIComponent(re)}/${currentId}`, true);
+    alert(validar ? "✅ Validado." : "✅ Salvo.");
+    currentObj.status = patch.status;
+    $("statusShow").value = patch.status;
+    await loadInstrList();
+  }catch(e){ console.error(e); alert("Erro ao salvar/validar. Veja console F12."); }
+}
+
+function zerarTiros(){ const rule=RULES[currentObj.tipo]; currentObj.correcao.tiros=Array(rule.shots).fill(0); buildShots(rule); recomputeAll(); }
+function maxTiros(){ const rule=RULES[currentObj.tipo]; const mx=Math.max(...rule.shotOptions); currentObj.correcao.tiros=Array(rule.shots).fill(mx); buildShots(rule); recomputeAll(); }
+function allProc(val){ const rule=RULES[currentObj.tipo]; currentObj.correcao.procedimentosOK=Array(rule.procCount).fill(val); buildProcedures(rule); recomputeAll(); }
+function clearPen(){ currentObj.correcao.penalidadesQtd={}; buildPenalties(RULES[currentObj.tipo]); recomputeAll(); }
+
+/*************** SÚMULA (mínimo) ***************/
+function escHtml(s){ return (s??"").toString().replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+async function fetchAssinatura(){ try{ const sig = await rtdbGet(`config/instrutores/${encodeURIComponent(INSTRUTOR_USER)}/assinatura`); return sig && sig.dataUrl ? sig : null; }catch(e){ return null; } }
+function renderSumulaHTML(id, obj, sig){
+  const a = obj.aluno1 || {};
+  const c = obj.correcao || {};
+  const rule = RULES[obj.tipo] || {max:350};
+  return `
+  <div class="sumula">
+    <div class="page">
+      <div class="s-title">SÚMULA (VISUALIZAÇÃO)</div>
+      <div class="s-sub">ID ${id} • ${escHtml(obj.tipo||"")} • ${escHtml(obj.data||"")}</div>
+      <div class="s-grid">
+        <div class="s-line"><b>Nome</b>${escHtml(a.nome||"")}</div>
+        <div class="s-line"><b>RE / Posto-Grad</b>${escHtml(a.re||"")} • ${escHtml(a.postoGrad||"")}</div>
+        <div class="s-line"><b>Local</b>${escHtml(obj.local||"")}</div>
+        <div class="s-line"><b>Unidade</b>${escHtml(obj.unidade||"")}</div>
+        <div class="s-line"><b>Arma Nº</b>${escHtml(a.armaNumero||"")}</div>
+        <div class="s-line"><b>Status</b>${escHtml(obj.status||"")}</div>
+      </div>
+      <table class="s-table">
+        <tr><th>Máxima</th><th>A</th><th>B</th><th>C</th><th>E</th><th>Nota</th><th>Conceito</th></tr>
+        <tr>
+          <td style="text-align:center">${rule.max}</td>
+          <td style="text-align:center">${c.A??0}</td>
+          <td style="text-align:center">${c.B??0}</td>
+          <td style="text-align:center">${c.C??0}</td>
+          <td style="text-align:center">${c.E??0}</td>
+          <td style="text-align:center">${(c.nota??0).toFixed? (c.nota??0).toFixed(3) : c.nota??0}</td>
+          <td style="text-align:center">${escHtml(c.conceito||"")}</td>
+        </tr>
+      </table>
+      <table class="s-table">
+        <tr><th colspan="2">Observações</th></tr>
+        <tr><td style="width:20%"><b>Aluno</b></td><td>${escHtml(obj.obsAluno||"")}</td></tr>
+        <tr><td><b>Instrutor</b></td><td>${escHtml(c.obsInstr||"")}</td></tr>
+      </table>
+    </div>
+  </div>`;
+}
+async function openSumulaModal(id, obj, origin){
+  const sig = await fetchAssinatura();
+  $("modalTitle").textContent = "📄 Súmula";
+  $("modalSub").textContent = `ID ${id} • ${obj.aluno1?.nome||"-"}`;
+  $("modalBody").innerHTML = renderSumulaHTML(id, obj, sig);
+  $("btnPrint").style.display = isDesktop() ? "" : "none";
+  $("modal").style.display="flex";
+}
+function closeModal(){ $("modal").style.display="none"; $("modalBody").innerHTML=""; }
+function doPrintCurrentModal(){ const html=$("modalBody").innerHTML; $("printArea").innerHTML=html; $("printArea").style.display="block"; window.print(); $("printArea").style.display="none"; $("printArea").innerHTML=""; }
+
+/*************** INIT ***************/
+async function init(){
+  try{ await rtdbGet("config"); setBadge("ONLINE (RTDB)", true); }
+  catch(e){ console.error(e); setBadge("OFFLINE / RULES BLOQUEANDO", false); }
+}
+
+window.addEventListener("DOMContentLoaded", async ()=>{
+  requireInstrutor();
+  await init();
+  await loadInstrList();
+
+  $("btnLogout").addEventListener("click", logout);
+  $("btnConsultar").addEventListener("click", consultarRE);
+  $("btnRecarregar").addEventListener("click", loadInstrList);
+  $("hideFinalizados").addEventListener("change", loadInstrList);
+  $("btnLimparFinalizados").addEventListener("click", ()=>{
+    // só tira da tela (não apaga do banco)
+    const data = document.querySelectorAll("#instrList .item");
+    data.forEach(el=>{
+      const st = el.querySelector("span[style]")?.textContent || "";
+    });
+    // Marca IDs finalizados como removidos
+    // (recarrega para aplicar)
+    (async ()=>{
+      try{
+        const data = await rtdbGet("avaliacoes", `?orderBy="$key"&limitToLast=50`);
+        const ids = data ? Object.keys(data) : [];
+        ids.forEach(id=>{ if(data[id]?.status==="FINALIZADO") removedFinalizados.add(id); });
+        await loadInstrList();
+      }catch(e){ console.error(e); }
+    })();
+  });
+
+  $("btnZerarTiros").addEventListener("click", zerarTiros);
+  $("btnMaxTiros").addEventListener("click", maxTiros);
+  $("btnAllProcOK").addEventListener("click", ()=>allProc(true));
+  $("btnAllProcErr").addEventListener("click", ()=>allProc(false));
+  $("btnClearPen").addEventListener("click", clearPen);
+
+  $("btnSalvar").addEventListener("click", ()=>salvar(false));
+  $("btnValidar").addEventListener("click", ()=>salvar(true));
+  $("btnFecharEditor").addEventListener("click", closeEditor);
+  $("btnVerSumula").addEventListener("click", ()=> openSumulaModal(currentId, currentObj, "editor"));
+
+  $("btnCloseModal").addEventListener("click", closeModal);
+  $("btnPrint").addEventListener("click", doPrintCurrentModal);
+  $("modal").addEventListener("click", (e)=>{ if(e.target===$("modal")) closeModal(); });
+});
+</script>
+</body>
+</html>

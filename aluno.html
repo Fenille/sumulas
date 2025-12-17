@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RITE • Aluno</title>
+<style>
+:root{
+  --y:#ffff00; --yn:#f9ff7a; --bg:#000; --bg2:#050509;
+  --card:rgba(10,10,15,.96); --bd:rgba(255,255,0,.18);
+  --mut:#cfcfcf; --sh:0 14px 40px rgba(0,0,0,.85); --r:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:var(--y);
+  background:radial-gradient(circle at top,#202020 0,var(--bg2) 52%,var(--bg) 100%);
+}
+.wrap{max-width:1200px;margin:0 auto;padding:14px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:14px 16px;border:1px solid var(--bd);border-radius:18px;
+  background:linear-gradient(180deg,rgba(10,10,15,.96),rgba(5,5,9,.92));
+  box-shadow:var(--sh);
+}
+h1{margin:0;font-size:18px;letter-spacing:.6px}
+.sub{color:var(--mut);font-size:12px;margin-top:4px}
+.badge{padding:8px 10px;border-radius:999px;font-weight:900;font-size:12px;white-space:nowrap;
+  background:rgba(255,255,0,.16);color:var(--y);border:1px solid rgba(255,255,0,.25);
+}
+.badge.ok{background:var(--y);color:#0b0b10;border:1px solid rgba(0,0,0,.2)}
+.grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+@media(min-width:920px){.grid{grid-template-columns:420px 1fr}}
+
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;box-shadow:var(--sh);padding:14px}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,0,.22);background:rgba(0,0,0,.25);font-size:12px;color:var(--mut);
+}
+.sep{height:1px;background:rgba(255,255,0,.14);margin:12px 0}
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+.field{grid-column:span 12;display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--mut)}
+input,select,textarea{width:100%;border-radius:12px;border:1px solid rgba(255,255,0,.22);
+  background:rgba(0,0,0,.35);color:var(--y);padding:10px 12px;outline:none;
+}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(255,255,0,.28);background:rgba(0,0,0,.35)}
+/* Evita “branco” do autofill do Chrome */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus{
+  -webkit-text-fill-color: var(--y) !important;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(0,0,0,.35) inset !important;
+  box-shadow: 0 0 0px 1000px rgba(0,0,0,.35) inset !important;
+  transition: background-color 9999s ease-out 0s;
+}
+select{
+  appearance:none;-webkit-appearance:none;-moz-appearance:none;
+  background-color:rgba(0,0,0,.35);
+  padding-right:34px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--y) 50%),
+    linear-gradient(135deg, var(--y) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) calc(50% - 4px),
+    calc(100% - 12px) calc(50% - 4px);
+  background-size:6px 6px, 6px 6px;
+  background-repeat:no-repeat;
+}
+option{color:#000;background:#fff;}
+textarea{min-height:86px;resize:vertical}
+
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+button{border:0;border-radius:14px;padding:10px 14px;font-weight:900;cursor:pointer;
+  background:rgba(255,255,0,.14);color:var(--y);border:1px solid rgba(255,255,0,.28);
+}
+button.primary{background:var(--y);color:#0b0b10;border:1px solid rgba(0,0,0,.2)}
+button.danger{background:rgba(255,60,60,.14);border-color:rgba(255,60,60,.35);color:#ffd3d3}
+.muted{color:var(--mut);font-size:12px}
+.list{display:grid;gap:10px}
+.item{padding:12px;border-radius:16px;border:1px solid rgba(255,255,0,.18);background:rgba(0,0,0,.25);
+  display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+}
+.item b{color:var(--y)}
+.right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.kpi{display:flex;gap:10px;flex-wrap:wrap}
+.kpi .pill{color:var(--yn)}
+.tabs{display:flex;gap:10px;flex-wrap:wrap}
+
+.shotsGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media(min-width:920px){.shotsGrid{grid-template-columns:repeat(10,minmax(0,1fr));}}
+.shotCell{border:1px solid rgba(255,255,0,.18);background:rgba(0,0,0,.25);border-radius:12px;padding:8px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.shotCell label{font-size:11px;color:var(--mut)}
+.shotCell select{padding:10px 10px;border-radius:10px;font-weight:900;text-align:center}
+
+.checks{display:grid;grid-template-columns:1fr;gap:8px}
+@media(min-width:920px){.checks{grid-template-columns:1fr 1fr}}
+.checkItem{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:14px;
+  border:1px solid rgba(255,255,0,.16);background:rgba(0,0,0,.22);
+}
+.checkItem input[type="checkbox"]{width:auto;margin-top:3px}
+.checkItem .txt{display:flex;flex-direction:column;gap:3px}
+.checkItem .txt b{font-size:13px}
+.checkItem .txt small{color:var(--mut);font-size:12px;line-height:1.25}
+
+.penQty{display:flex;gap:8px;align-items:center;margin-left:auto}
+.penBadge{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,0,.22);background:rgba(0,0,0,.25);font-size:12px;color:var(--yn);min-width:54px;text-align:center}
+.tiny{padding:7px 10px;border-radius:12px;font-size:12px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:12px;z-index:9999}
+.modal .box{width:min(980px,100%);max-height:92vh;overflow:auto;background:rgba(10,10,15,.98);border:1px solid rgba(255,255,0,.22);border-radius:18px;box-shadow:var(--sh);padding:14px}
+.modal .head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.modal .head .pill{color:var(--yn)}
+
+.sumula{background:#fff;color:#111;border-radius:12px;padding:0;margin-top:12px}
+.page{padding:18px 18px 14px 18px;border-bottom:1px dashed #bbb}
+.page:last-child{border-bottom:none}
+.s-title{font-weight:900;text-align:center;letter-spacing:.4px}
+.s-sub{text-align:center;font-size:12px;color:#333;margin-top:4px}
+.s-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.s-line{border:1px solid #333;padding:8px;font-size:12px}
+.s-line b{display:block;font-size:11px;color:#333;margin-bottom:3px}
+.s-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.s-table td,.s-table th{border:1px solid #333;padding:6px;vertical-align:top}
+.s-table th{background:#f2f2f2}
+.sig{display:flex;gap:14px;align-items:flex-end;justify-content:space-between;margin-top:16px}
+.sig img{max-width:320px;height:auto;border:1px solid #333;padding:6px}
+.sig .block{flex:1;font-size:11px}
+.sig .line{border-top:1px solid #333;margin-top:30px;padding-top:4px}
+
+@media print {
+  body{background:#fff;color:#111}
+  .wrap,.top,.grid,.card,.modal{display:none!important}
+  #printArea{display:block!important}
+  #printArea .page{page-break-after:always}
+  #printArea .page:last-child{page-break-after:auto}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>RITE • Súmulas de Tiro</h1>
+      <div class="sub">Tela do Aluno • Envio do cabeçalho para o instrutor</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div id="badge" class="badge">OFFLINE</div>
+      <button class="danger" id="btnLogout">Sair</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="pill">🔎 Consulta por RE</div>
+      <div class="muted" style="margin-top:8px">Mostra todas as avaliações do RE e permite visualizar a súmula.</div>
+      <div class="row" style="margin-top:10px">
+        <div class="field" style="grid-column:span 8">
+          <label>RE</label>
+          <input id="consultaRE" placeholder="Ex.: 123456-7">
+        </div>
+        <div class="field" style="grid-column:span 4;align-self:end">
+          <button class="primary" id="btnConsultar">Consultar</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="list" id="consultaList"></div>
+
+      <div class="sep"></div>
+      <div class="muted">Aluno logado: <b id="reLogado">-</b></div>
+    </div>
+
+    <div class="card">
+      <div class="pill">📝 Cabeçalho (Aluno)</div>
+      <div class="muted" style="margin-top:8px">
+        Digite o <b>RE</b> e o sistema tenta puxar os dados do cadastro. Se existir, bloqueia edição (evita trocar o nome no RE).
+      </div>
+      <div class="sep"></div>
+
+      <div class="row">
+        <div class="field" style="grid-column:span 6">
+          <label>Tipo</label>
+          <select id="tipo">
+            <option value="PPA_PISTOLA">PPA • Pistola .40</option>
+            <option value="PPA_ESP12">PPA • Espingarda 12</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column:span 6">
+          <label>Data</label>
+          <input id="data" type="date">
+        </div>
+
+        <div class="field" style="grid-column:span 6">
+          <label>Local</label>
+          <input id="local" placeholder="Estande / Localidade">
+        </div>
+        <div class="field" style="grid-column:span 6">
+          <label>Unidade</label>
+          <input id="unidade" placeholder="18º BPM/I">
+        </div>
+
+        <div class="field" style="grid-column:span 6">
+          <label>Nome</label>
+          <input id="aNome" placeholder="Nome completo">
+        </div>
+        <div class="field" style="grid-column:span 3">
+          <label>RE</label>
+          <input id="aRE" placeholder="RE">
+        </div>
+        <div class="field" style="grid-column:span 3">
+          <label>Posto/Grad</label>
+          <input id="aPG" placeholder="Sd PM">
+        </div>
+
+        <div class="field" style="grid-column:span 6">
+          <label>Nº da arma</label>
+          <input id="aArma" placeholder="12345">
+        </div>
+
+        <div class="field">
+          <label>Observações (opcional)</label>
+          <textarea id="obsAluno" placeholder="..."></textarea>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button class="primary" id="btnEnviar">Enviar para o instrutor</button>
+      </div>
+
+      <div class="sep"></div>
+      <div class="muted" id="alunoMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="box">
+    <div class="head">
+      <div>
+        <div class="pill" id="modalTitle">📄 Súmula</div>
+        <div class="muted" id="modalSub"></div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">
+        <button id="btnPrint" class="primary">Imprimir / Salvar PDF</button>
+        <button id="btnCloseModal" class="danger">Fechar</button>
+      </div>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div id="printArea" style="display:none"></div>
+
+<script>
+/*************** FIREBASE RTDB (REST) ***************/
+const DATABASE_URL = "https://rite-fa75b-default-rtdb.firebaseio.com";
+const INSTRUTOR_USER = "Fenille";
+
+/*************** TEXTOS / REGRAS ***************/
+const TEXTOS = {
+  PPA_PISTOLA: {
+    proc: Array.from({length:25}, (_,i)=>`Procedimento ${String(i+1).padStart(2,"0")}`),
+    pen:  Array.from({length:11}, (_,i)=>`Penalidade ${String(i+1).padStart(2,"0")}`),
+    rep:  ["Descontrole emocional","Normas de segurança","Dificuldade no manejo","Disparo fora do barranco","Disparo acidental","Derrubar a arma"],
+  },
+  PPA_ESP12: {
+    proc: Array.from({length:25}, (_,i)=>`Procedimento ${String(i+1).padStart(2,"0")}`),
+    pen:  Array.from({length:11}, (_,i)=>`Penalidade ${String(i+1).padStart(2,"0")}`),
+    rep:  ["Descontrole emocional","Normas de segurança","Dificuldade no manejo","Disparo fora do barranco","Disparo acidental","Derrubar a arma"],
+  },
+};
+const RULES = {
+  PPA_PISTOLA: { max: 350, shots: 44, shotOptions: [0,5,10], procCount: 25, procPts: 10, penPts: 10 },
+  PPA_ESP12:   { max: 350, shots: 22, shotOptions: [0,10,20], procCount: 25, procPts: 10, penPts: 10 },
+};
+
+/*************** UTIL ***************/
+const $ = (id)=>document.getElementById(id);
+const safe=(s)=>(s??"").toString().trim();
+const isoNow=()=> new Date().toISOString();
+const isDesktop=()=> window.matchMedia("(min-width: 920px)").matches;
+
+function setBadge(text, ok){ const b=$("badge"); b.textContent=text; b.classList.toggle("ok", !!ok); }
+function showAlert(msg){ alert(msg); }
+
+async function rtdbGet(path, query="") {
+  const url = `${DATABASE_URL}/${path}.json${query}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbPut(path, data) {
+  const url = `${DATABASE_URL}/${path}.json`;
+  const res = await fetch(url, {method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)});
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbPatch(path, data) {
+  const url = `${DATABASE_URL}/${path}.json`;
+  const res = await fetch(url, {method:"PATCH", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)});
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+async function rtdbPost(path, data) {
+  const url = `${DATABASE_URL}/${path}.json`;
+  const res = await fetch(url, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)});
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+
+/*************** SESSION ***************/
+let session=null; // {role:'aluno', re}
+
+function logout(){
+  sessionStorage.removeItem("rite_session");
+  location.href="index.html";
+}
+
+function requireAluno(){
+  try{
+    const s = JSON.parse(sessionStorage.getItem("rite_session")||"null");
+    if(!s || s.role!=="aluno") throw new Error("no session");
+    session=s;
+    $("reLogado").textContent = s.re;
+    $("aRE").value = s.re;
+    window.scrollTo({top:0, behavior:"instant"});
+  }catch(e){
+    location.href="index.html";
+  }
+}
+
+/*************** CADASTRO POR RE ***************/
+async function getCadastroRE(re){
+  try{
+    return await rtdbGet(`cadastrosAlunos/${encodeURIComponent(re)}`);
+  }catch(e){
+    return null;
+  }
+}
+
+async function carregarCadastroRE(){
+  const re = safe($("aRE").value) || (session?.re||"");
+  if(!re) return;
+  try{
+    const cad = await getCadastroRE(re);
+    if(cad && cad.nome){
+      $("aNome").value = cad.nome || "";
+      $("aPG").value = cad.postoGrad || "";
+      $("unidade").value = cad.unidade || "";
+      $("aNome").disabled = true;
+      $("aPG").disabled = true;
+      $("unidade").disabled = true;
+      $("alunoMsg").textContent = "✅ Cadastro encontrado. Campos bloqueados para evitar trocar o nome no RE.";
+    } else {
+      $("aNome").disabled = false;
+      $("aPG").disabled = false;
+      $("unidade").disabled = false;
+      $("alunoMsg").textContent = "ℹ️ RE sem cadastro ainda. Preencha os dados (serão gravados para este RE).";
+    }
+  }catch(e){
+    $("aNome").disabled = false;
+    $("aPG").disabled = false;
+    $("unidade").disabled = false;
+  }
+}
+
+/*************** ALUNO: ENVIAR CABEÇALHO ***************/
+async function enviarCabecalho(){
+  const tipo = $("tipo").value;
+  const rule = RULES[tipo];
+  if(!rule) return showAlert("Tipo inválido.");
+
+  const re = safe($("aRE").value) || session.re;
+
+  // Se RE já tiver cadastro, força dados
+  const cad = await getCadastroRE(re);
+  if(cad?.nome){
+    $("aNome").value = cad.nome;
+    $("aPG").value = cad.postoGrad || $("aPG").value;
+  }
+
+  const payload={
+    tipo,
+    data: $("data").value || "",
+    local: safe($("local").value),
+    unidade: safe($("unidade").value),
+    aluno1:{
+      nome: safe($("aNome").value),
+      re,
+      postoGrad: safe($("aPG").value),
+      armaNumero: safe($("aArma").value),
+    },
+    obsAluno: safe($("obsAluno").value),
+    status:"AGUARDANDO_INSTRUTOR",
+    criadoEm: isoNow(),
+    criadoPor: session.re,
+    correcao:{
+      tiros: Array(rule.shots).fill(0),
+      procedimentosOK: Array(rule.procCount).fill(true),
+      penalidadesQtd: {},
+      reprovacao: Array(TEXTOS[tipo].rep.length).fill(false),
+      A:0,B:rule.procCount*rule.procPts,C:0,E:0,nota:0,conceito:"",
+      obsInstr:""
+    },
+    validadoEm:null, validadoPor:null
+  };
+
+  if(!payload.data || !payload.local || !payload.unidade || !payload.aluno1.nome || !payload.aluno1.re){
+    return showAlert("Preencha: Data, Local, Unidade, Nome e RE.");
+  }
+
+  try{
+    // salva/atualiza cadastro do RE
+    await rtdbPatch(`cadastrosAlunos/${encodeURIComponent(re)}`, {
+      nome: payload.aluno1.nome,
+      postoGrad: payload.aluno1.postoGrad,
+      unidade: payload.unidade,
+      atualizadoEm: isoNow()
+    });
+
+    const resp = await rtdbPost("avaliacoes", payload);
+    const id = resp?.name;
+    if(!id) throw new Error("Push não retornou ID.");
+
+    // índice por RE
+    await rtdbPut(`indexPorRE/${encodeURIComponent(re)}/${id}`, true);
+
+    $("alunoMsg").textContent = `✅ Enviado para o instrutor! ID: ${id}`;
+    $("aArma").value=""; $("obsAluno").value="";
+  }catch(e){
+    console.error(e);
+    showAlert("Erro ao enviar. Abra o console (F12) para ver o motivo real.");
+  }
+}
+
+/*************** CONSULTA POR RE ***************/
+async function consultarRE(){
+  const re=safe($("consultaRE").value);
+  if(!re) return showAlert("Digite um RE.");
+  $("consultaList").innerHTML = `<div class="muted">Consultando…</div>`;
+  try{
+    const idx = await rtdbGet(`indexPorRE/${encodeURIComponent(re)}`);
+    if(!idx){ $("consultaList").innerHTML=`<div class="muted">Nenhum registro para esse RE.</div>`; return; }
+    const ids = Object.keys(idx);
+    const reads = await Promise.all(ids.map(id => rtdbGet(`avaliacoes/${id}`)));
+    const items = reads.map((v,i)=> (v ? ({id:ids[i], ...v}) : null))
+      .filter(Boolean)
+      .sort((a,b)=> (b.criadoEm||"").localeCompare(a.criadoEm||""));
+
+    $("consultaList").innerHTML="";
+    for(const it of items){
+      const nome = it.aluno1?.nome || "(sem nome)";
+      const tipo = it.tipo || "-";
+      const data = it.data || "-";
+      const st = it.status || "-";
+      const E = it.correcao?.E ?? 0;
+      const conc = it.correcao?.conceito ?? "-";
+
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div>
+          <div><b>${nome}</b> • ${tipo}</div>
+          <div class="muted">${data} • <span style="color:${st==='FINALIZADO'?'#a8ffb0':'#fff0a8'}">${st}</span></div>
+        </div>
+        <div class="right">
+          <span class="pill">E: ${E}</span>
+          <span class="pill">${conc}</span>
+          <button class="tiny">Ver</button>
+        </div>
+      `;
+      div.querySelector("button").addEventListener("click", ()=> openSumulaModal(it.id, it, "consulta"));
+      $("consultaList").appendChild(div);
+    }
+  }catch(e){
+    console.error(e);
+    $("consultaList").innerHTML = `<div class="muted">Erro na consulta. (Veja o console F12.)</div>`;
+  }
+}
+
+/*************** SÚMULA (mínimo) ***************/
+function escHtml(s){ return (s??"").toString().replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+
+async function fetchAssinatura(){
+  try{
+    const sig = await rtdbGet(`config/instrutores/${encodeURIComponent(INSTRUTOR_USER)}/assinatura`);
+    return sig && sig.dataUrl ? sig : null;
+  }catch(e){ return null; }
+}
+
+function renderSumulaHTML(id, obj, sig){
+  const a = obj.aluno1 || {};
+  const c = obj.correcao || {};
+  const rule = RULES[obj.tipo] || {max:350, penPts:10};
+  return `
+  <div class="sumula">
+    <div class="page">
+      <div class="s-title">SÚMULA (VISUALIZAÇÃO)</div>
+      <div class="s-sub">ID ${id} • ${escHtml(obj.tipo||"")} • ${escHtml(obj.data||"")}</div>
+      <div class="s-grid">
+        <div class="s-line"><b>Nome</b>${escHtml(a.nome||"")}</div>
+        <div class="s-line"><b>RE / Posto-Grad</b>${escHtml(a.re||"")} • ${escHtml(a.postoGrad||"")}</div>
+        <div class="s-line"><b>Local</b>${escHtml(obj.local||"")}</div>
+        <div class="s-line"><b>Unidade</b>${escHtml(obj.unidade||"")}</div>
+        <div class="s-line"><b>Arma Nº</b>${escHtml(a.armaNumero||"")}</div>
+        <div class="s-line"><b>Status</b>${escHtml(obj.status||"")}</div>
+      </div>
+      <table class="s-table">
+        <tr><th>Máxima</th><th>A</th><th>B</th><th>C</th><th>E</th><th>Nota</th><th>Conceito</th></tr>
+        <tr>
+          <td style="text-align:center">${rule.max}</td>
+          <td style="text-align:center">${c.A??0}</td>
+          <td style="text-align:center">${c.B??0}</td>
+          <td style="text-align:center">${c.C??0}</td>
+          <td style="text-align:center">${c.E??0}</td>
+          <td style="text-align:center">${(c.nota??0).toFixed? (c.nota??0).toFixed(3) : c.nota??0}</td>
+          <td style="text-align:center">${escHtml(c.conceito||"")}</td>
+        </tr>
+      </table>
+      <table class="s-table">
+        <tr><th colspan="2">Observações</th></tr>
+        <tr><td style="width:20%"><b>Aluno</b></td><td>${escHtml(obj.obsAluno||"")}</td></tr>
+        <tr><td><b>Instrutor</b></td><td>${escHtml(c.obsInstr||"")}</td></tr>
+      </table>
+    </div>
+  </div>`;
+}
+
+async function openSumulaModal(id, obj){
+  const sig = await fetchAssinatura();
+  $("modalTitle").textContent = "📄 Súmula";
+  $("modalSub").textContent = `ID ${id} • ${obj.aluno1?.nome||"-"}`;
+  $("modalBody").innerHTML = renderSumulaHTML(id, obj, sig);
+  $("btnPrint").style.display = isDesktop() ? "" : "none";
+  $("modal").style.display="flex";
+}
+
+function closeModal(){ $("modal").style.display="none"; $("modalBody").innerHTML=""; }
+function doPrintCurrentModal(){
+  const html = $("modalBody").innerHTML;
+  $("printArea").innerHTML = html;
+  $("printArea").style.display="block";
+  window.print();
+  $("printArea").style.display="none";
+  $("printArea").innerHTML="";
+}
+
+/*************** INIT ***************/
+async function init(){
+  try{ await rtdbGet("config"); setBadge("ONLINE (RTDB)", true); }
+  catch(e){ console.error(e); setBadge("OFFLINE / RULES BLOQUEANDO", false); }
+}
+
+window.addEventListener("DOMContentLoaded", ()=>{
+  requireAluno();
+  init();
+
+  $("btnLogout").addEventListener("click", logout);
+  $("btnConsultar").addEventListener("click", consultarRE);
+
+  $("aRE").addEventListener("blur", carregarCadastroRE);
+  $("btnEnviar").addEventListener("click", enviarCabecalho);
+
+  $("btnCloseModal").addEventListener("click", closeModal);
+  $("btnPrint").addEventListener("click", doPrintCurrentModal);
+  $("modal").addEventListener("click", (e)=>{ if(e.target===$("modal")) closeModal(); });
+
+  // pré-carrega cadastro do RE logado
+  carregarCadastroRE();
+});
+</script>
+</body>
+</html>
