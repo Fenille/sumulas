@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RITE • Consulta por RE</title>
+<style>
+:root{
+  --y:#ffff00; --yn:#f9ff7a; --bg:#000; --bg2:#050509;
+  --card:rgba(10,10,15,.96); --bd:rgba(255,255,0,.18);
+  --mut:#cfcfcf; --sh:0 14px 40px rgba(0,0,0,.85); --r:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:var(--y);
+  background:radial-gradient(circle at top,#202020 0,var(--bg2) 52%,var(--bg) 100%);
+}
+.wrap{max-width:980px;margin:0 auto;padding:14px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:14px 16px;border:1px solid var(--bd);border-radius:18px;
+  background:linear-gradient(180deg,rgba(10,10,15,.96),rgba(5,5,9,.92));
+  box-shadow:var(--sh);
+}
+h1{margin:0;font-size:18px;letter-spacing:.6px}
+.sub{color:var(--mut);font-size:12px;margin-top:4px}
+.badge{padding:8px 10px;border-radius:999px;font-weight:900;font-size:12px;white-space:nowrap;
+  background:rgba(255,255,0,.16);color:var(--y);border:1px solid rgba(255,255,0,.25);
+}
+.badge.ok{background:var(--y);color:#0b0b10;border:1px solid rgba(0,0,0,.2)}
+.card{margin-top:14px;background:var(--card);border:1px solid var(--bd);border-radius:18px;box-shadow:var(--sh);padding:14px}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,0,.22);background:rgba(0,0,0,.25);font-size:12px;color:var(--mut);
+}
+.sep{height:1px;background:rgba(255,255,0,.14);margin:12px 0}
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}
+.field{grid-column:span 12;display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--mut)}
+input{width:100%;border-radius:12px;border:1px solid rgba(255,255,0,.22);
+  background:rgba(0,0,0,.35);color:var(--y);padding:10px 12px;outline:none;
+}
+input{-webkit-text-fill-color:var(--y);}
+input:focus{outline:2px solid rgba(255,255,0,.28);}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus{
+  -webkit-text-fill-color:var(--y) !important;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(0,0,0,.45) inset !important;
+  transition: background-color 9999s ease-out 0s;
+}
+button{border:0;border-radius:14px;padding:10px 14px;font-weight:900;cursor:pointer;
+  background:rgba(255,255,0,.14);color:var(--y);border:1px solid rgba(255,255,0,.28);
+}
+button.primary{background:var(--y);color:#0b0b10;border:1px solid rgba(0,0,0,.2)}
+.muted{color:var(--mut);font-size:12px}
+.list{display:grid;gap:10px;margin-top:10px}
+.item{padding:12px;border-radius:16px;border:1px solid rgba(255,255,0,.18);background:rgba(0,0,0,.25);
+  display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+}
+.item b{color:var(--y)}
+.right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.pill2{display:inline-flex;gap:8px;align-items:center;padding:6px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,0,.22);background:rgba(0,0,0,.25);font-size:12px;color:var(--yn);
+}
+.tiny{padding:7px 10px;border-radius:12px;font-size:12px}
+
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:12px;z-index:9999}
+.modal .box{width:min(980px,100%);max-height:92vh;overflow:auto;background:rgba(10,10,15,.98);border:1px solid rgba(255,255,0,.22);border-radius:18px;box-shadow:var(--sh);padding:14px}
+.modal .head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sumula{background:#fff;color:#111;border-radius:12px;padding:0;margin-top:12px}
+.page{padding:18px 18px 14px 18px;border-bottom:1px dashed #bbb}
+.page:last-child{border-bottom:none}
+.s-title{font-weight:900;text-align:center;letter-spacing:.4px}
+.s-sub{text-align:center;font-size:12px;color:#333;margin-top:4px}
+.s-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.s-line{border:1px solid #333;padding:8px;font-size:12px}
+.s-line b{display:block;font-size:11px;color:#333;margin-bottom:3px}
+.s-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px}
+.s-table td,.s-table th{border:1px solid #333;padding:6px;vertical-align:top}
+.s-table th{background:#f2f2f2}
+.sig{display:flex;gap:14px;align-items:flex-end;justify-content:space-between;margin-top:16px}
+.sig img{max-width:320px;height:auto;border:1px solid #333;padding:6px}
+.sig .block{flex:1;font-size:11px}
+.sig .line{border-top:1px solid #333;margin-top:30px;padding-top:4px}
+
+@media print {
+  body{background:#fff;color:#111}
+  .wrap,.top,.card,.modal{display:none!important}
+  #printArea{display:block!important}
+  #printArea .page{page-break-after:always}
+  #printArea .page:last-child{page-break-after:auto}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>RITE • Consulta por RE</h1>
+      <div class="sub">Digite o RE para ver as avaliações e abrir a súmula. (Sem login)</div>
+    </div>
+    <div id="badge" class="badge">OFFLINE</div>
+  </div>
+
+  <div class="card">
+    <div class="pill">🔎 Consulta</div>
+    <div class="sep"></div>
+    <div class="row">
+      <div class="field" style="grid-column:span 8">
+        <label>RE</label>
+        <input id="consultaRE" placeholder="Ex.: 123456-7" inputmode="text" autocomplete="off">
+      </div>
+      <div class="field" style="grid-column:span 4;align-self:end">
+        <button class="primary" id="btnConsultar">Consultar</button>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <div class="muted" id="hint">
+      Dica: se aparecer “nenhum registro”, confira se o RE está no formato certo (ex.: 123456-7).
+    </div>
+    <div class="list" id="consultaList"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="box">
+    <div class="head">
+      <div>
+        <div class="pill2" id="modalTitle">📄 Súmula</div>
+        <div class="muted" id="modalSub"></div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">
+        <button id="btnPrint" class="primary">Imprimir / Salvar PDF</button>
+        <button id="btnCloseModal">Fechar</button>
+      </div>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div id="printArea" style="display:none"></div>
+
+<script>
+/*************** AJUSTE AQUI SE PRECISAR ***************/
+const DATABASE_URL = "https://rite-fa75b-default-rtdb.firebaseio.com";
+const INSTRUTOR_USER = "Fenille"; // para buscar assinatura em config/instrutores/<nome>/assinatura
+
+/*************** TEXTOS + REGRAS (mesmos do sistema) ***************/
+const TEXTOS = {
+  PPA_PISTOLA: {
+    proc: [
+      "Mediante ordem preparar a pistola para executar a “PPA” colocando-a no coldre (alimentada, carregada, cão desarmado, travada, coldre abotoado). Primeiro carregador com 6 (seis) cartuchos; um carregador de reposição com 10 (dez) cartuchos.",
+      "Ao sinal convencionado sacar a pistola e colocar-se em proteção no abrigo ”A”, com rapidez, em condições de atuar e disparar",
+      "Varredura e saída do abrigo “A”",
+      "Primeira progressão (do abrigo “A” até o abrigo “B”)",
+      "Proteger-se e atuar corretamente no abrigo “B” e progressão até o abrigo “C”",
+      "Proteger-se e atuar corretamente no abrigo “C” e progressão até o abrigo “D”",
+      "Proteger-se e atuar corretamente na “janela baixa” (abrigo “D”)",
+      "Proteger-se e atuar corretamente no canto da direita (abrigo “D)",
+      "Primeira verbalização obrigatória, com posição correta da arma (abrigo “D”)",
+      "Proteger-se e atuar corretamente na “janela alta” (abrigo “D”)",
+      "Proteger-se e atuar corretamente no canto da esquerda (abrigo “D”)",
+      "Segunda verbalização obrigatória, com posição correta da arma (abrigo “D”)",
+      "Terceira verbalização obrigatória, com posição correta da arma (abrigo “D”)",
+      "Recarregar a pistola corretamente, com rapidez, protegido, e sem perder o contato visual com a área de perigo (recarga tática ou emergencial, a critério do aluno).",
+      "Atuar com a pistola sempre carregada",
+      "Efetuar os disparos com rapidez (dois de cada vez em cada alvo atirável).",
+      "Conduzir a pistola corretamente, com o cano e o olhar na direção do perigo.",
+      "Dedo fora do gatilho quando dos deslocamentos, e quando não for para atirar",
+      "Outras verbalizações, com posição correta da arma.",
+      "Aplicação de sinais policiais, em situações obrigatórias, como se estivesse com um companheiro",
+      "Proteger-se corretamente nos demais procedimentos.",
+      "Regressão (do abrigo “D” até o abrigo “A”)",
+      "Terminada a regressão coldrear a pistola, em segurança, sem descarregá-la, travada. Aguardar ordens",
+      "Mediante ordem retirar a pistola do coldre, descarregá-la, com segurança, entregando-a ao professor como se a estivesse entregando na reserva de armas ou a outro companheiro",
+      "Solução de incidentes de tiro (caso ocorram)"
+    ],
+    pen: [
+      "Arma e equipamentos mal ajustados ao corpo atrapalhando a execução dos exercícios.",
+      "Disparo, sem acerto, em alvo não atirável. Cada disparo uma penalidade. Ver item seguinte",
+      "Acerto em alvo não atirável. Cada acerto duas penalidades. Ver item anterior (um não exclui o outro)",
+      "Disparos no mesmo alvo, além do determinado (cada disparo a mais uma penalidade)",
+      "Deixar de disparar contra alvo agressor obrigatoriamente atirável (cada disparo uma penalidade).",
+      "Não manter a arma em “posição de tiro”, efetuando “varredura”, após os disparos",
+      "Derrubar o carregador de reposição",
+      "Acionar o gatilho estando a pistola travada ou descarregada.",
+      "Ultrapassar a arma, ou qualquer parte do corpo, para além da zona de segurança.",
+      "Não completar a pista por falta de munição (uma penalidade para cada tiro faltante).",
+      "Precipitar-se. Praticar a valentia perigosa. Não pedir apoio quando necessário."
+    ],
+    rep: [
+      "Apresentar descontrole emocional",
+      "Atentar contra as normas de segurança",
+      "Demonstrar dificuldades no manejo ou na atuação com a pistola.",
+      "Disparar para fora do barranco de contenção dos projéteis.",
+      "Disparo acidental com ou sem vítima.",
+      "Derrubar a pistola."
+    ]
+  },
+  PPA_ESP12: {
+    proc: [
+      "Mediante ordem preparar a espingarda para executar a “PPA” (alimentada; depósito com 3 cartuchos, mais 5 de reposição no porta cartuchos, todos “singular” – projétil único; em bandoleira de três pontos individualizada; “posição sul”)",
+      "Ao sinal convencionado carregar a espingarda e colocar-se em proteção no abrigo ”A”, com rapidez, em condições de atuar e disparar",
+      "Varredura e saída do primeiro abrigo (abrigo “A”)",
+      "Primeira progressão (do abrigo “A” até o abrigo “B”)",
+      "Proteger-se e atuar corretamente no abrigo “B” e progressão até o abrigo “C”",
+      "Proteger-se e atuar corretamente no abrigo “C” e progressão até o abrigo “D”",
+      "Proteger-se e atuar corretamente na “janela baixa” (abrigo “D”)",
+      "Proteger-se e atuar corretamente no canto da direita (abrigo “D”)",
+      "Primeira verbalização obrigatória, com posição correta da arma (abrigo “D”)",
+      "Proteger-se e atuar corretamente na “janela alta” (abrigo “D”)",
+      "Proteger-se e atuar corretamente no canto da esquerda (abrigo “D”)",
+      "Segunda verbalização obrigatória, com posição correta da arma (abrigo “D”)",
+      "Terceira verbalização obrigatória, com posição correta da arma (abrigo “D”)",
+      "Realimentar e recarregar a espingarda corretamente, com rapidez, protegido, e sem perder o contato visual com a área de perigo (tática ou emergencial, a critério do aluno).",
+      "Atuar com a espingarda sempre carregada",
+      "Efetuar o disparo com rapidez (um disparo em cada alvo atirável)",
+      "Conduzir a espingarda corretamente, com o cano e o olhar na direção do perigo.",
+      "Dedo fora do gatilho quando dos deslocamentos, e quando não for para atirar",
+      "Outras verbalizações, com posição correta da arma.",
+      "Aplicação de sinais policiais, em situações obrigatórias, como se estivesse com um companheiro",
+      "Proteger-se corretamente nos demais procedimentos.",
+      "Regressão (do abrigo “D” até o abrigo “A”).",
+      "Terminada a regressão colocar a espingarda em “posição sul”, gatilho travado, sem descarregá-la. Aguardar ordens",
+      "Mediante ordem, descarregar a espingarda, com segurança, entregando-a ao professor, como se a estivesse entregando na reserva de armas, ou a outro companheiro",
+      "Solução de incidentes de tiro (caso ocorram)"
+    ],
+    pen: [
+      "Arma e equipamentos mal ajustados ao corpo atrapalhando a execução dos exercícios.",
+      "Disparo, sem acerto, em alvo não atirável. Cada disparo uma penalidade. Ver item seguinte",
+      "Acerto em alvo não atirável. Cada acerto duas penalidades. Ver item anterior (um não exclui o outro)",
+      "Disparos no mesmo alvo, além do determinado (cada disparo a mais uma penalidade)",
+      "Deixar de disparar contra alvo agressor obrigatoriamente atirável (cada disparo uma penalidade).",
+      "Recarregar e manter a arma em “posição de tiro”, efetuando “varredura”, após os disparos",
+      "Derrubar munição de reposição",
+      "Acionar o gatilho estando a espingarda descarregada ou com o gatilho travado.",
+      "Ultrapassar a arma, ou qualquer parte do corpo, para além da zona de segurança.",
+      "Não completar a pista por falta de munição (uma penalidade para cada tiro faltante).",
+      "Precipitar-se. Praticar a valentia perigosa. Não pedir apoio quando necessário."
+    ],
+    rep: [
+      "Apresentar descontrole emocional",
+      "Atentar contra as normas de segurança",
+      "Demonstrar dificuldades no manejo ou na atuação com a espingarda.",
+      "Disparar para fora do barranco de contenção dos projéteis.",
+      "Disparo acidental com ou sem vítima.",
+      "Derrubar a espingarda."
+    ]
+  }
+};
+
+const RULES = {
+  PPA_PISTOLA: { max: 350, procCount: 25, procPts: 10, penPts: 10 },
+  PPA_ESP12:   { max: 350, procCount: 25, procPts: 10, penPts: 10 }
+};
+
+const $ = (id)=>document.getElementById(id);
+const safe=(s)=>(s??"").toString().trim();
+const isDesktop=()=> window.matchMedia("(min-width: 920px)").matches;
+
+function setBadge(text, ok){
+  const b=$("badge");
+  b.textContent=text;
+  b.classList.toggle("ok", !!ok);
+}
+
+/*************** REST HELPERS ***************/
+async function rtdbGet(path, query=""){
+  const url = `${DATABASE_URL}/${path}.json${query}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
+
+/*************** CONCEITO ***************/
+function conceitoPorNota(n){
+  const pct = (n/350)*100;
+  if (pct <= 49) return "Insuficiente";
+  if (pct <= 69) return "Regular";
+  if (pct <= 84) return "Bom";
+  if (pct <= 95) return "Muito bom";
+  return "Excepcional";
+}
+
+/*************** SÚMULA ***************/
+function escHtml(s){ return (s??"").toString().replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+
+async function fetchAssinatura(){
+  try{
+    const sig = await rtdbGet(`config/instrutores/${encodeURIComponent(INSTRUTOR_USER)}/assinatura`);
+    return sig && sig.dataUrl ? sig : null;
+  }catch(e){ return null; }
+}
+
+function renderSumulaHTML(id, obj, sig){
+  const rule = RULES[obj.tipo] || RULES.PPA_PISTOLA;
+  const t = TEXTOS[obj.tipo] || TEXTOS.PPA_PISTOLA;
+  const a = obj.aluno1 || {};
+  const c = obj.correcao || {};
+  const penQtd = c.penalidadesQtd || {};
+
+  const procRows = t.proc.map((desc, i)=> {
+    const ok = (c.procedimentosOK||[])[i] !== false;
+    return `<tr><td>${String(i+1).padStart(2,"0")}</td><td>${escHtml(desc)}</td><td style="text-align:center">${ok ? "X" : ""}</td><td style="text-align:center">${!ok ? "X" : ""}</td></tr>`;
+  }).join("");
+
+  const penRows = t.pen.map((desc,i)=> {
+    const q = Number(penQtd[i]||0);
+    return `<tr><td>${String(i+1).padStart(2,"0")}</td><td>${escHtml(desc)}</td><td style="text-align:center">${q>0?("x"+q):""}</td><td style="text-align:center">${q>0?(q*rule.penPts):""}</td></tr>`;
+  }).join("");
+
+  const repRows = t.rep.map((desc,i)=> {
+    const m = (c.reprovacao||[])[i] ? "X" : "";
+    return `<tr><td>${String(i+1).padStart(2,"0")}</td><td>${escHtml(desc)}</td><td style="text-align:center">${m}</td></tr>`;
+  }).join("");
+
+  const sigBlock = sig?.dataUrl
+    ? `<img src="${sig.dataUrl}" alt="assinatura"><div class="block"><div class="line">${escHtml(sig.nomeExibido||INSTRUTOR_USER)}</div><div>Professor</div></div>`
+    : `<div class="block" style="flex:1"><div class="line">Assinatura do professor</div><div>(sem assinatura cadastrada)</div></div>`;
+
+  const nota = Number(c.nota ?? Math.max(0, Math.min(rule.max, Number(c.E ?? 0))));
+  const conceito = c.conceito || conceitoPorNota(nota);
+
+  return `
+  <div class="sumula" id="sumulaDoc">
+    <div class="page">
+      <div class="s-title">SÚMULA PARA HABILITAR USUÁRIO (PPA-PADRÃO)</div>
+      <div class="s-sub">${obj.tipo==="PPA_PISTOLA" ? "PISTOLA SEMIAUTOMÁTICA .40 S&W" : "ESPINGARDA CAL. 12"}</div>
+
+      <div class="s-grid">
+        <div class="s-line"><b>Data</b>${escHtml(obj.data||"")}</div>
+        <div class="s-line"><b>Local</b>${escHtml(obj.local||"")}</div>
+        <div class="s-line"><b>Nome</b>${escHtml(a.nome||"")}</div>
+        <div class="s-line"><b>RE / Posto-Grad</b>${escHtml(a.re||"")} • ${escHtml(a.postoGrad||"")}</div>
+        <div class="s-line"><b>Unidade</b>${escHtml(obj.unidade||"")}</div>
+        <div class="s-line"><b>${obj.tipo==="PPA_PISTOLA"?"Pistola Nº":"Espingarda Nº"}</b>${escHtml(a.armaNumero||"")}</div>
+      </div>
+
+      <table class="s-table">
+        <tr><th colspan="6">PONTUAÇÃO</th></tr>
+        <tr>
+          <th style="width:18%">Máxima</th><th style="width:14%">A (alvos)</th><th style="width:14%">B (proced.)</th><th style="width:14%">C (penal.)</th><th style="width:14%">E (final)</th><th style="width:26%">Conceito / Nota</th>
+        </tr>
+        <tr>
+          <td style="text-align:center">${rule.max}</td>
+          <td style="text-align:center">${c.A??0}</td>
+          <td style="text-align:center">${c.B??0}</td>
+          <td style="text-align:center">${c.C??0}</td>
+          <td style="text-align:center">${(c.pontos ?? Math.max(0, Math.min(rule.max, Number(c.E??0))))}</td>
+          <td><b>PONTOS:</b> ${(c.pontos ?? Math.max(0, Math.min(rule.max, Number(c.E??0))))}<br><b>NOTA:</b> ${Number(((c.nota ?? nota) / rule.max) * 10).toFixed(3)}<br><b>CONCEITO:</b> ${escHtml(conceito)}</td>
+        </tr>
+      </table>
+
+      <table class="s-table">
+        <tr><th colspan="4">“B” – PROCEDIMENTOS (10 pts por procedimento certo)</th></tr>
+        <tr><th style="width:6%">#</th><th>Descrição</th><th style="width:10%">Certo</th><th style="width:10%">Errado</th></tr>
+        ${procRows}
+      </table>
+    </div>
+
+    <div class="page">
+      <table class="s-table">
+        <tr><th colspan="4">“C” – PENALIDADES (10 pts negativos por ocorrência) — quantidade</th></tr>
+        <tr><th style="width:6%">#</th><th>Descrição</th><th style="width:12%">Qtd</th><th style="width:18%">Pts negativos</th></tr>
+        ${penRows}
+      </table>
+
+      <table class="s-table">
+        <tr><th colspan="3">“D” – REPROVAÇÃO (penalidades fatais)</th></tr>
+        <tr><th style="width:6%">#</th><th>Descrição</th><th style="width:12%">Marcado</th></tr>
+        ${repRows}
+      </table>
+
+      <table class="s-table">
+        <tr><th colspan="2">OBSERVAÇÕES</th></tr>
+        <tr><td style="width:20%"><b>Aluno</b></td><td>${escHtml(obj.obsAluno||"")}</td></tr>
+        <tr><td><b>Instrutor</b></td><td>${escHtml(c.obsInstr||"")}</td></tr>
+      </table>
+
+      <div class="sig">
+        <div class="block">
+          <div class="line">Assinatura do Aluno</div>
+          <div>${escHtml(a.postoGrad||"")} • ${escHtml(a.re||"")} • ${escHtml(a.nome||"")}</div>
+        </div>
+        ${sigBlock}
+      </div>
+    </div>
+  </div>`;
+}
+
+async function openSumulaModal(id, obj){
+  const sig = await fetchAssinatura();
+  $("modalSub").textContent = `ID ${id} • ${obj.aluno1?.nome||"-"} • ${obj.tipo||"-"} • ${obj.data||"-"}`;
+  $("modalBody").innerHTML = renderSumulaHTML(id, obj, sig);
+  $("btnPrint").style.display = isDesktop() ? "" : "none";
+  $("modal").style.display="flex";
+}
+
+function closeModal(){
+  $("modal").style.display="none";
+  $("modalBody").innerHTML="";
+}
+
+function doPrintCurrentModal(){
+  const html = $("modalBody").innerHTML;
+  $("printArea").innerHTML = html;
+  $("printArea").style.display = "block";
+  window.print();
+  $("printArea").style.display = "none";
+  $("printArea").innerHTML = "";
+}
+
+/*************** CONSULTA ***************/
+async function consultarRE(){
+  const re=safe($("consultaRE").value);
+  if(!re) return alert("Digite um RE.");
+  $("consultaList").innerHTML = `<div class="muted">Consultando…</div>`;
+  try{
+    const idx = await rtdbGet(`indexPorRE/${encodeURIComponent(re)}`);
+    if(!idx){ $("consultaList").innerHTML=`<div class="muted">Nenhum registro para esse RE.</div>`; return; }
+
+    const ids = Object.keys(idx);
+    const reads = await Promise.all(ids.map(id => rtdbGet(`avaliacoes/${id}`)));
+    const items = reads.map((v,i)=> ({id:ids[i], ...v}))
+      .filter(x=>x && x.tipo)
+      .sort((a,b)=> (b.criadoEm||"").localeCompare(a.criadoEm||""));
+
+    $("consultaList").innerHTML="";
+    for(const it of items){
+      const nome = it.aluno1?.nome || "(sem nome)";
+      const tipo = it.tipo || "-";
+      const data = it.data || "-";
+      const st = it.status || "-";
+      const E = it.correcao?.E ?? 0;
+      const conc = it.correcao?.conceito ?? "-";
+
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div>
+          <div><b>${nome}</b> • ${tipo}</div>
+          <div class="muted">${data} • <span style="color:${st==='FINALIZADO'?'#16d468':'#ffd36a'}">${st}</span></div>
+        </div>
+        <div class="right">
+          <span class="pill2">Pts: ${it.correcao?.pontos ?? Math.max(0, Math.min(350, Number(E||0)))}</span><span class="pill2">Nota: ${Number(it.correcao?.nota ?? ((Math.max(0, Math.min(350, Number(E||0))) / 350) * 10)).toFixed(3)}</span>
+          <span class="pill2">${conc}</span>
+          <button class="tiny primary" data-id="${it.id}">Ver</button>
+        </div>`;
+      div.querySelector("button").addEventListener("click", ()=> openSumulaModal(it.id, it));
+      $("consultaList").appendChild(div);
+    }
+  }catch(e){
+    console.error(e);
+    $("consultaList").innerHTML = `<div class="muted">Erro: permissões (Rules) ou conexão.</div>`;
+  }
+}
+
+/*************** INIT ***************/
+async function init(){
+  try{ await rtdbGet("config"); setBadge("ONLINE (RTDB)", true); }
+  catch(e){ console.error(e); setBadge("OFFLINE / RULES BLOQUEANDO", false); }
+}
+
+window.addEventListener("DOMContentLoaded", ()=>{
+  init();
+  $("btnConsultar").addEventListener("click", consultarRE);
+  $("consultaRE").addEventListener("keydown", (e)=>{ if(e.key==="Enter") consultarRE(); });
+
+  $("btnCloseModal").addEventListener("click", closeModal);
+  $("btnPrint").addEventListener("click", doPrintCurrentModal);
+  $("modal").addEventListener("click", (e)=>{ if(e.target===$("modal")) closeModal(); });
+});
+</script>
+</body>
+</html>
