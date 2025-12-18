@@ -495,37 +495,210 @@ async function fetchAssinatura(){
 function renderSumulaHTML(id, obj, sig){
   const a = obj.aluno1 || {};
   const c = obj.correcao || {};
-  const rule = RULES[obj.tipo] || {max:350, penPts:10};
+  const rule = RULES[obj.tipo] || {max:350, shots:0, procCount:0, procPts:10, penPts:10};
+  const T = TEXTOS[obj.tipo] || {proc:[], pen:[], rep:[]};
+
+  const tituloTopo = (obj.tipo==="PPA_PISTOLA")
+    ? `CAPÍTULO 19 (Manual da Pistola)<br>PMESP - TDPV - “MÉTODO GIRALDI”®`
+    : `CAPÍTULO 19 (Manual da Espingarda 12)<br>PMESP - TDPV - “MÉTODO GIRALDI”®`;
+
+  const armaTitulo = (obj.tipo==="PPA_PISTOLA")
+    ? `PISTOLA SEMIAUTOMÁTICA .40 S&W<br><b>SÚMULA PARA HABILITAR USUÁRIO (“PPA-PADRÃO”)®</b>`
+    : `“ESPINGARDA CAL 12”<br><b>SÚMULA PARA HABILITAR USUÁRIO (“PPA-PADRÃO”)®</b>`;
+
+  // ===== A (alvos) =====
+  const tiros = Array.isArray(c.tiros) ? c.tiros : [];
+  let rowsA = "";
+  for(let i=0;i<22;i++){
+    if(obj.tipo==="PPA_PISTOLA"){
+      const v1 = Number(tiros[i*2]   ?? 0);
+      const v2 = Number(tiros[i*2+1] ?? 0);
+      rowsA += `<tr>
+        <td style="text-align:center">${String(i+1).padStart(2,"0")}</td>
+        <td style="text-align:center">${v1}</td>
+        <td style="text-align:center">${v2}</td>
+        <td style="text-align:center"><b>${v1+v2}</b></td>
+      </tr>`;
+    }else{
+      const v = Number(tiros[i] ?? 0);
+      rowsA += `<tr>
+        <td style="text-align:center">${String(i+1).padStart(2,"0")}</td>
+        <td style="text-align:center"><b>${v}</b></td>
+      </tr>`;
+    }
+  }
+
+  const headA = (obj.tipo==="PPA_PISTOLA")
+    ? `<tr><th>ALVO</th><th>TIRO 1</th><th>TIRO 2</th><th>SUBTOTAL</th></tr>`
+    : `<tr><th>ALVO</th><th>PONTOS</th></tr>`;
+
+  const zonaTxt = (obj.tipo==="PPA_PISTOLA")
+    ? `“A”, “B”, “C”, “D”, braço e mão que segura a arma; acerto na arma do agressor: 10 (dez) pontos<br>“E”, “F”, “G”, “H”: 05 (cinco) pontos`
+    : `“A”, “B”, “C”, “D”, braço e mão que segura a arma; acerto na arma do agressor: 20 (vinte) pontos<br>“E”, “F”, “G”, “H”: 10 (dez) pontos`;
+
+  // ===== B (procedimentos) =====
+  const procOK = Array.isArray(c.procedimentosOK) ? c.procedimentosOK : Array(rule.procCount).fill(true);
+  let rowsB = "";
+  for(let i=0;i<rule.procCount;i++){
+    const ok = (procOK[i] ?? true);
+    rowsB += `<tr>
+      <td style="width:42px;text-align:center">${String(i+1).padStart(2,"0")}</td>
+      <td>${escHtml(T.proc[i]||"")}</td>
+      <td style="text-align:center;font-weight:900">${ok ? "X" : ""}</td>
+      <td style="text-align:center;font-weight:900">${!ok ? "X" : ""}</td>
+    </tr>`;
+  }
+
+  // ===== C (penalidades) =====
+  const qtd = c.penalidadesQtd || {};
+  let rowsC = "";
+  let penCount = 0;
+  for(let i=0;i<(T.pen||[]).length;i++){
+    const n = Number(qtd[i]||0);
+    penCount += n;
+    rowsC += `<tr>
+      <td style="width:42px;text-align:center">${String(i+1).padStart(2,"0")}</td>
+      <td>${escHtml(T.pen[i]||"")}</td>
+      <td style="width:70px;text-align:center">${n>0?("x"+n):"—"}</td>
+      <td style="width:70px;text-align:center">${n>0?(n*rule.penPts):"0"}</td>
+    </tr>`;
+  }
+
+  // ===== D (reprovação) =====
+  const rep = Array.isArray(c.reprovacao) ? c.reprovacao : [];
+  let rowsD="";
+  for(let i=0;i<(T.rep||[]).length;i++){
+    const mark = !!rep[i];
+    rowsD += `<tr>
+      <td style="width:42px;text-align:center">${String(i+1).padStart(2,"0")}</td>
+      <td>${escHtml(T.rep[i]||"")}</td>
+      <td style="width:70px;text-align:center;font-weight:900">${mark?"X":""}</td>
+    </tr>`;
+  }
+
+  const A = Number(c.A ?? (tiros||[]).reduce((s,v)=>s+Number(v||0),0));
+  const B = Number(c.B ?? ((procOK||[]).filter(Boolean).length * (rule.procPts||10)));
+  const Ctot = Number(c.C ?? (penCount * (rule.penPts||10)));
+  const E = Number(c.E ?? (A + B - Ctot));
+  const nota = (c.nota!=null) ? Number(c.nota) : Number(Math.max(0, Math.min(rule.max, E)).toFixed(3));
+  const conc = c.conceito || "";
+
+  const conceitoTxt = `
+    De 00 % à 49 % da pontuação máxima possível (de ________ a _______ pts): <b>Insuficiente</b><br>
+    De 50 % à 69 % da pontuação máxima possível (de ________ a _______ pts): <b>Regular</b><br>
+    De 70 % à 84 % da pontuação máxima possível (de ________ a _______ pts): <b>Bom</b><br>
+    De 85 % à 95 % da pontuação máxima possível (de ________ a _______ pts): <b>Muito bom</b> (PASSAR PARA O CABEÇALHO)<br>
+    De 96 % à 100 % da pontuação máxima possível (de ________ a _______ pts): <b>Excepcional</b>
+  `;
+
+  const sigImg = (sig && sig.dataUrl) ? `<img src="${sig.dataUrl}" alt="Assinatura">` : "";
+
   return `
   <div class="sumula">
     <div class="page">
-      <div class="s-title">SÚMULA (VISUALIZAÇÃO)</div>
-      <div class="s-sub">ID ${id} • ${escHtml(obj.tipo||"")} • ${escHtml(obj.data||"")}</div>
-      <div class="s-grid">
-        <div class="s-line"><b>Nome</b>${escHtml(a.nome||"")}</div>
-        <div class="s-line"><b>RE / Posto-Grad</b>${escHtml(a.re||"")} • ${escHtml(a.postoGrad||"")}</div>
-        <div class="s-line"><b>Local</b>${escHtml(obj.local||"")}</div>
-        <div class="s-line"><b>Unidade</b>${escHtml(obj.unidade||"")}</div>
-        <div class="s-line"><b>Arma Nº</b>${escHtml(a.armaNumero||"")}</div>
-        <div class="s-line"><b>Status</b>${escHtml(obj.status||"")}</div>
-      </div>
-      <table class="s-table">
-        <tr><th>Máxima</th><th>A</th><th>B</th><th>C</th><th>E</th><th>Nota</th><th>Conceito</th></tr>
+      <div class="s-title">${tituloTopo}</div>
+      <div class="s-sub">${armaTitulo}</div>
+
+      <table class="s-table" style="margin-top:10px">
         <tr>
-          <td style="text-align:center">${rule.max}</td>
-          <td style="text-align:center">${c.A??0}</td>
-          <td style="text-align:center">${c.B??0}</td>
-          <td style="text-align:center">${c.C??0}</td>
-          <td style="text-align:center">${c.E??0}</td>
-          <td style="text-align:center">${(c.nota??0).toFixed? (c.nota??0).toFixed(3) : c.nota??0}</td>
-          <td style="text-align:center">${escHtml(c.conceito||"")}</td>
+          <td><b>DATA</b> ${escHtml(obj.data||"")}</td>
+          <td><b>LOCAL</b> ${escHtml(obj.local||"")}</td>
+        </tr>
+        <tr><td colspan="2"><b>NOME</b> ${escHtml(a.nome||"")}</td></tr>
+        <tr>
+          <td><b>RE</b> ${escHtml(a.re||"")}</td>
+          <td><b>POST/GRAD</b> ${escHtml(a.postoGrad||"")}</td>
+        </tr>
+        <tr><td colspan="2"><b>UNIDADE</b> ${escHtml(obj.unidade||"")}</td></tr>
+        <tr>
+          <td><b>${obj.tipo==="PPA_PISTOLA" ? "PISTOLA Nº" : "ESPINGARDA Nº"}</b> ${escHtml(a.armaNumero||"")}</td>
+          <td><b>STATUS</b> ${escHtml(obj.status||"")}</td>
         </tr>
       </table>
+
+      <table class="s-table" style="margin-top:10px">
+        <tr>
+          <th>PONTUAÇÃO MÁXIMA POSSÍVEL</th><th>PONTUAÇÃO OBTIDA (E)</th><th>CONCEITO</th><th>NOTA</th>
+        </tr>
+        <tr>
+          <td style="text-align:center"><b>${rule.max}</b></td>
+          <td style="text-align:center"><b>${E}</b></td>
+          <td style="text-align:center"><b>${escHtml(conc)}</b></td>
+          <td style="text-align:center"><b>${Number(nota).toFixed(3)}</b></td>
+        </tr>
+      </table>
+
+      <div style="margin-top:10px;font-size:12px">
+        <b>“A” – PONTOS NOS ALVOS</b> — ${obj.tipo==="PPA_PISTOLA" ? "Dois disparos em cada alvo atirável." : "Cartucho “Singular” (projétil único) – 1 disparo em cada alvo atirável."}
+      </div>
+
       <table class="s-table">
+        ${headA}
+        ${rowsA}
+        <tr>
+          <td colspan="${obj.tipo==="PPA_PISTOLA" ? 3 : 1}" style="text-align:right"><b>TOTAL A</b></td>
+          <td style="text-align:center"><b>${A}</b></td>
+        </tr>
+      </table>
+
+      <table class="s-table" style="margin-top:10px">
+        <tr><th>VALORES DAS ZONAS DE PONTUAÇÃO</th></tr>
+        <tr><td style="font-size:11px">${zonaTxt}</td></tr>
+      </table>
+
+      <table class="s-table" style="margin-top:10px">
+        <tr><th colspan="4">“B” – PONTOS DOS PROCEDIMENTOS (10 pts positivos por procedimento certo)</th></tr>
+        <tr><th style="width:42px">Nº</th><th>PROCEDIMENTO (descrição)</th><th style="width:70px">CERTO</th><th style="width:70px">ERRADO</th></tr>
+        ${rowsB}
+        <tr>
+          <td colspan="2" style="text-align:right"><b>TOTAL B</b></td>
+          <td colspan="2" style="text-align:center"><b>${B}</b></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="page">
+      <table class="s-table">
+        <tr><th colspan="4">“C” – PENALIDADES (10 pts negativos por ocorrência)</th></tr>
+        <tr><th style="width:42px">Nº</th><th>PENALIDADE (descrição)</th><th style="width:70px">QTD</th><th style="width:70px">PTS</th></tr>
+        ${rowsC}
+        <tr>
+          <td colspan="3" style="text-align:right"><b>TOTAL C</b></td>
+          <td style="text-align:center"><b>${Ctot}</b></td>
+        </tr>
+      </table>
+
+      <table class="s-table" style="margin-top:10px">
+        <tr><th colspan="3">“D” – REPROVAÇÃO (penalidades fatais)</th></tr>
+        <tr><th style="width:42px">Nº</th><th>REPROVAÇÃO (descrição)</th><th style="width:70px">MARCA</th></tr>
+        ${rowsD}
+      </table>
+
+      <table class="s-table" style="margin-top:10px">
+        <tr><th colspan="2">“E” – PONTUAÇÃO FINAL (A + B − C)</th></tr>
+        <tr><td><b>A</b> ${A}</td><td><b>B</b> ${B}</td></tr>
+        <tr><td><b>C</b> ${Ctot}</td><td><b>E</b> <b>${E}</b></td></tr>
+      </table>
+
+      <table class="s-table" style="margin-top:10px">
+        <tr><th>“F” – CONCEITOS/NOTA</th></tr>
+        <tr><td style="font-size:11px;line-height:1.3">${conceitoTxt}</td></tr>
+      </table>
+
+      <table class="s-table" style="margin-top:10px">
         <tr><th colspan="2">Observações</th></tr>
         <tr><td style="width:20%"><b>Aluno</b></td><td>${escHtml(obj.obsAluno||"")}</td></tr>
         <tr><td><b>Instrutor</b></td><td>${escHtml(c.obsInstr||"")}</td></tr>
       </table>
+
+      <div class="sig">
+        <div class="block">
+          <div class="line"><b>Assinatura do Aluno</b> — Posto/Grad, RE, nome de guerra legível</div>
+          <div class="line"><b>Assinatura do Professor</b></div>
+          <div style="margin-top:10px;font-size:11px">Anexar esta súmula ao “RIT” do aluno • OBS.: Anotações no verso</div>
+        </div>
+        ${sigImg ? `<div>${sigImg}</div>` : ``}
+      </div>
     </div>
   </div>`;
 }
