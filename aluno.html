@@ -132,6 +132,11 @@ button.danger{background:rgba(255,60,60,.14);border-color:rgba(255,60,60,.35);co
 .sig .block{flex:1;font-size:11px}
 .sig .line{border-top:1px solid #333;margin-top:30px;padding-top:4px}
 
+
+.sigpadWrap{margin-top:10px}
+#sigPad{width:100%;height:180px;border:1px solid rgba(255,255,0,.22);border-radius:14px;background:rgba(0,0,0,.25);touch-action:none}
+@media(min-width:920px){#sigPad{height:200px}}
+
 @media print {
   body{background:#fff;color:#111}
   .wrap,.top,.grid,.card,.modal{display:none!important}
@@ -225,7 +230,17 @@ button.danger{background:rgba(255,60,60,.14);border-color:rgba(255,60,60,.35);co
           <label>Observações (opcional)</label>
           <textarea id="obsAluno" placeholder="..."></textarea>
         </div>
+      
+      <div class="sep"></div>
+      <div class="pill">✍️ Assinatura do aluno</div>
+      <div class="muted" style="margin-top:8px">Assine com o mouse (desktop) ou com o dedo (smartphone). Use “Limpar” para refazer.</div>
+      <div class="sigpadWrap">
+        <canvas id="sigPad"></canvas>
+        <div class="btns" style="margin-top:10px">
+          <button type="button" class="danger" id="btnSigClear">Limpar assinatura</button>
+        </div>
       </div>
+</div>
 
       <div class="btns">
         <button class="primary" id="btnEnviar">Enviar para o instrutor</button>
@@ -263,14 +278,104 @@ const INSTRUTOR_USER = "Fenille";
 /*************** TEXTOS / REGRAS ***************/
 const TEXTOS = {
   PPA_PISTOLA: {
-    proc: Array.from({length:25}, (_,i)=>`Procedimento ${String(i+1).padStart(2,"0")}`),
-    pen:  Array.from({length:11}, (_,i)=>`Penalidade ${String(i+1).padStart(2,"0")}`),
-    rep:  ["Descontrole emocional","Normas de segurança","Dificuldade no manejo","Disparo fora do barranco","Disparo acidental","Derrubar a arma"],
+    proc: [
+      "Mediante ordem, preparar a pistola para executar a prova (alimentada, carregada, cão desarmado, travada; no coldre abotoado; 1º carregador com 6 cartuchos e 1 carregador de reposição com 10 cartuchos).",
+      "Ao sinal convencionado, sacar a pistola e colocar-se em proteção no Abrigo 1, com rapidez, em condições de atuar e disparar.",
+      "Varredura e saída do Abrigo 1.",
+      "Primeira progressão (do Abrigo 1 para o Abrigo 2).",
+      "Proteger-se e atuar corretamente no Abrigo 2 e na progressão para o Abrigo 3.",
+      "Proteger-se e atuar corretamente no Abrigo 3 e na progressão para o Abrigo 4.",
+      "Proteger-se e atuar corretamente na janela baixa (Abrigo 4).",
+      "Proteger-se e atuar corretamente no canto da direita (Abrigo 4).",
+      "1ª verbalização obrigatória, com posição correta da arma (Abrigo 4).",
+      "Proteger-se e atuar corretamente na janela alta (Abrigo 4).",
+      "Proteger-se e atuar corretamente no canto da esquerda (Abrigo 4).",
+      "2ª verbalização obrigatória, com posição correta da arma (Abrigo 4).",
+      "3ª verbalização obrigatória, com posição correta da arma (Abrigo 4).",
+      "Recarregar a pistola corretamente, com rapidez, protegido, sem perder o contato visual com a área de perigo (recarga tática ou emergencial, a critério do aluno).",
+      "Atuar com a pistola sempre carregada.",
+      "Efetuar os disparos com rapidez (dois disparos em cada alvo agressor atirável).",
+      "Conduzir a pistola corretamente, com o cano e o olhar na direção do perigo.",
+      "Dedo fora do gatilho durante os deslocamentos e quando não for para atirar.",
+      "Outras verbalizações, com posição correta da arma.",
+      "Aplicação de sinais policiais em situações obrigatórias (como se estivesse com um companheiro).",
+      "Proteger-se corretamente nos demais procedimentos.",
+      "Regressão (do Abrigo 4 para o Abrigo 1).",
+      "Terminada a regressão, coldrear a pistola em segurança, sem descarregá-la, travada, e aguardar ordens.",
+      "Mediante ordem, retirar a pistola do coldre, descarregá-la com segurança e entregá-la ao professor (como se estivesse entregando na reserva de armas ou a outro companheiro).",
+      "Solução de incidentes de tiro (caso ocorram)."
+    ],
+    pen:  [
+      "Arma e equipamentos mal ajustados ao corpo, atrapalhando a execução dos exercícios.",
+      "Disparo, sem acerto, em alvo não atirável (cada disparo = 1 penalidade).",
+      "Acerto em alvo não atirável (cada acerto = 2 penalidades; um não exclui o outro).",
+      "Disparos no mesmo alvo, além do determinado (cada disparo a mais = 1 penalidade).",
+      "Deixar de disparar contra alvo agressor obrigatoriamente atirável (cada disparo faltante = 1 penalidade).",
+      "Não manter a arma em condição de tiro e/ou deixar de efetuar varredura após os disparos.",
+      "Derrubar o carregador de reposição.",
+      "Acionar o gatilho estando a pistola travada ou descarregada.",
+      "Ultrapassar a arma, ou qualquer parte do corpo, para além da zona de segurança.",
+      "Não completar a pista por falta de munição (1 penalidade para cada tiro faltante).",
+      "Precipitar-se / praticar valentia perigosa / não pedir apoio quando necessário."
+    ],
+    rep:  [
+      "Apresentar descontrole emocional.",
+      "Atentar contra as normas de segurança.",
+      "Demonstrar dificuldades no manejo ou na atuação com a arma.",
+      "Disparar para fora do barranco de contenção dos projéteis.",
+      "Disparo acidental com ou sem vítima.",
+      "Derrubar a arma."
+    ],
   },
   PPA_ESP12: {
-    proc: Array.from({length:25}, (_,i)=>`Procedimento ${String(i+1).padStart(2,"0")}`),
-    pen:  Array.from({length:11}, (_,i)=>`Penalidade ${String(i+1).padStart(2,"0")}`),
-    rep:  ["Descontrole emocional","Normas de segurança","Dificuldade no manejo","Disparo fora do barranco","Disparo acidental","Derrubar a arma"],
+    proc: [
+      "Mediante ordem, preparar a espingarda para executar a prova (alimentada; depósito com 3 cartuchos + 5 de reposição no porta-cartuchos; todos singular/projétil único; bandoleira de 3 pontos individualizada).",
+      "Ao sinal convencionado, carregar a espingarda e colocar-se em proteção no Abrigo 1, com rapidez, em condições de atuar e disparar.",
+      "Varredura e saída do Abrigo 1.",
+      "Primeira progressão (do Abrigo 1 para o Abrigo 2).",
+      "Proteger-se e atuar corretamente no Abrigo 2 e na progressão para o Abrigo 3.",
+      "Proteger-se e atuar corretamente no Abrigo 3 e na progressão para o Abrigo 4.",
+      "Proteger-se e atuar corretamente na janela baixa (Abrigo 4).",
+      "Proteger-se e atuar corretamente no canto da direita (Abrigo 4).",
+      "1ª verbalização obrigatória, com posição correta da arma (Abrigo 4).",
+      "Proteger-se e atuar corretamente na janela alta (Abrigo 4).",
+      "Proteger-se e atuar corretamente no canto da esquerda (Abrigo 4).",
+      "2ª verbalização obrigatória, com posição correta da arma (Abrigo 4).",
+      "3ª verbalização obrigatória, com posição correta da arma (Abrigo 4).",
+      "Realimentar/recarregar a espingarda corretamente, com rapidez, protegido, sem perder o contato visual com a área de perigo (tática ou emergencial, a critério do aluno).",
+      "Atuar com a espingarda sempre carregada.",
+      "Efetuar o disparo com rapidez (um disparo em cada alvo agressor atirável).",
+      "Conduzir a espingarda corretamente, com o cano e o olhar na direção do perigo.",
+      "Dedo fora do gatilho durante os deslocamentos e quando não for para atirar.",
+      "Outras verbalizações, com posição correta da arma.",
+      "Aplicação de sinais policiais em situações obrigatórias (como se estivesse com um companheiro).",
+      "Proteger-se corretamente nos demais procedimentos.",
+      "Regressão (do Abrigo 4 para o Abrigo 1).",
+      "Terminada a regressão, colocar a espingarda em condição segura (gatilho travado), sem descarregá-la, e aguardar ordens.",
+      "Mediante ordem, descarregar a espingarda com segurança e entregá-la ao professor (como se estivesse entregando na reserva de armas ou a outro companheiro).",
+      "Solução de incidentes de tiro (caso ocorram)."
+    ],
+    pen:  [
+      "Arma e equipamentos mal ajustados ao corpo, atrapalhando a execução dos exercícios.",
+      "Disparo, sem acerto, em alvo não atirável (cada disparo = 1 penalidade).",
+      "Acerto em alvo não atirável (cada acerto = 2 penalidades; um não exclui o outro).",
+      "Disparos no mesmo alvo, além do determinado (cada disparo a mais = 1 penalidade).",
+      "Deixar de disparar contra alvo agressor obrigatoriamente atirável (cada disparo faltante = 1 penalidade).",
+      "Não manter a arma em condição de tiro e/ou deixar de efetuar varredura após os disparos.",
+      "Derrubar munição de reposição.",
+      "Acionar o gatilho estando a espingarda descarregada ou com o gatilho travado.",
+      "Ultrapassar a arma, ou qualquer parte do corpo, para além da zona de segurança.",
+      "Não completar a pista por falta de munição (1 penalidade para cada tiro faltante).",
+      "Precipitar-se / praticar valentia perigosa / não pedir apoio quando necessário."
+    ],
+    rep:  [
+      "Apresentar descontrole emocional.",
+      "Atentar contra as normas de segurança.",
+      "Demonstrar dificuldades no manejo ou na atuação com a arma.",
+      "Disparar para fora do barranco de contenção dos projéteis.",
+      "Disparo acidental com ou sem vítima.",
+      "Derrubar a arma."
+    ],
   },
 };
 const RULES = {
@@ -395,6 +500,7 @@ async function enviarCabecalho(){
       armaNumero: safe($("aArma").value),
     },
     obsAluno: safe($("obsAluno").value),
+    assinaturaAluno: getSigDataUrl(),
     status:"AGUARDANDO_INSTRUTOR",
     criadoEm: isoNow(),
     criadoPor: session.re,
@@ -430,7 +536,7 @@ async function enviarCabecalho(){
     await rtdbPut(`indexPorRE/${encodeURIComponent(re)}/${id}`, true);
 
     $("alunoMsg").textContent = `✅ Enviado para o instrutor! ID: ${id}`;
-    $("aArma").value=""; $("obsAluno").value="";
+    $("aArma").value=""; $("obsAluno").value=""; $("btnSigClear")?.click();
   }catch(e){
     console.error(e);
     showAlert("Erro ao enviar. Abra o console (F12) para ver o motivo real.");
@@ -577,10 +683,57 @@ function renderSumulaHTML(id, obj, sig){
   }
 
   const A = Number(c.A ?? (tiros||[]).reduce((s,v)=>s+Number(v||0),0));
+
+  const alvosHTML = (()=>{
+    const half = 11;
+    const esc = (x)=>Number(x||0);
+    if(obj.tipo==="PPA_PISTOLA"){
+      const mk = (s,e)=>{
+        let r = `<table class="s-table">` +
+                `<tr><th>ALVO</th><th>TIRO 1</th><th>TIRO 2</th><th>SUBTOTAL</th></tr>`;
+        for(let i=s;i<e;i++){
+          const v1 = esc(tiros[i*2]);
+          const v2 = esc(tiros[i*2+1]);
+          r += `<tr><td style="text-align:center">${String(i+1).padStart(2,"0")}</td>`+
+               `<td style="text-align:center">${v1}</td>`+
+               `<td style="text-align:center">${v2}</td>`+
+               `<td style="text-align:center"><b>${v1+v2}</b></td></tr>`;
+        }
+        r += `</table>`;
+        return r;
+      };
+      return `<div class="s-grid" style="grid-template-columns:1fr 1fr;gap:10px">`+
+             `<div>${mk(0,half)}</div>`+
+             `<div>${mk(half,half*2)}</div>`+
+             `</div>`+
+             `<table class="s-table" style="margin-top:8px"><tr>`+
+             `<td style="text-align:right"><b>TOTAL A</b></td>`+
+             `<td style="text-align:center"><b>${A}</b></td></tr></table>`;
+    }else{
+      const mk = (s,e)=>{
+        let r = `<table class="s-table">` + `<tr><th>ALVO</th><th>PONTOS</th></tr>`;
+        for(let i=s;i<e;i++){
+          const v = esc(tiros[i]);
+          r += `<tr><td style="text-align:center">${String(i+1).padStart(2,"0")}</td>`+
+               `<td style="text-align:center"><b>${v}</b></td></tr>`;
+        }
+        r += `</table>`;
+        return r;
+      };
+      return `<div class="s-grid" style="grid-template-columns:1fr 1fr;gap:10px">`+
+             `<div>${mk(0,half)}</div>`+
+             `<div>${mk(half,half*2)}</div>`+
+             `</div>`+
+             `<table class="s-table" style="margin-top:8px"><tr>`+
+             `<td style="text-align:right"><b>TOTAL A</b></td>`+
+             `<td style="text-align:center"><b>${A}</b></td></tr></table>`;
+    }
+  })();
+
   const B = Number(c.B ?? ((procOK||[]).filter(Boolean).length * (rule.procPts||10)));
   const Ctot = Number(c.C ?? (penCount * (rule.penPts||10)));
   const E = Number(c.E ?? (A + B - Ctot));
-  const nota = (c.nota!=null) ? Number(c.nota) : Number(Math.max(0, Math.min(rule.max, E)).toFixed(3));
+  const nota = (c.nota!=null) ? Number(c.nota) : Number((Math.max(0, Math.min(rule.max, E)) / rule.max * 10).toFixed(3));
   const conc = c.conceito || "";
 
   const conceitoTxt = `
@@ -591,7 +744,8 @@ function renderSumulaHTML(id, obj, sig){
     De 96 % à 100 % da pontuação máxima possível (de ________ a _______ pts): <b>Excepcional</b>
   `;
 
-  const sigImg = (sig && sig.dataUrl) ? `<img src="${sig.dataUrl}" alt="Assinatura">` : "";
+  const sigImg = (sig && sig.dataUrl) ? `<img src="${sig.dataUrl}" alt="Assinatura do professor">` : "";
+  const sigAlunoImg = (obj.assinaturaAluno) ? `<img src="${obj.assinaturaAluno}" alt="Assinatura do aluno">` : "";
 
   return `
   <div class="sumula">
@@ -632,14 +786,7 @@ function renderSumulaHTML(id, obj, sig){
         <b>“A” – PONTOS NOS ALVOS</b> — ${obj.tipo==="PPA_PISTOLA" ? "Dois disparos em cada alvo atirável." : "Cartucho “Singular” (projétil único) – 1 disparo em cada alvo atirável."}
       </div>
 
-      <table class="s-table">
-        ${headA}
-        ${rowsA}
-        <tr>
-          <td colspan="${obj.tipo==="PPA_PISTOLA" ? 3 : 1}" style="text-align:right"><b>TOTAL A</b></td>
-          <td style="text-align:center"><b>${A}</b></td>
-        </tr>
-      </table>
+      ${alvosHTML}
 
       <table class="s-table" style="margin-top:10px">
         <tr><th>VALORES DAS ZONAS DE PONTUAÇÃO</th></tr>
@@ -694,6 +841,7 @@ function renderSumulaHTML(id, obj, sig){
       <div class="sig">
         <div class="block">
           <div class="line"><b>Assinatura do Aluno</b> — Posto/Grad, RE, nome de guerra legível</div>
+          ${sigAlunoImg ? `<div style="margin-top:8px">${sigAlunoImg}</div>` : ``}
           <div class="line"><b>Assinatura do Professor</b></div>
           <div style="margin-top:10px;font-size:11px">Anexar esta súmula ao “RIT” do aluno • OBS.: Anotações no verso</div>
         </div>
@@ -722,6 +870,88 @@ function doPrintCurrentModal(){
   $("printArea").innerHTML="";
 }
 
+
+/*************** ASSINATURA (CANVAS) ***************/
+let sigHasInk=false;
+function initSigPad(){
+  const canvas = $("sigPad");
+  if(!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.lineWidth = 2.4;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = "#111";
+    // fundo branco na exportação (fica igual súmula)
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0,0,rect.width,rect.height);
+    sigHasInk=false;
+  }
+
+  resize();
+  window.addEventListener("resize", resize);
+
+  let drawing=false;
+  let last=null;
+
+  function pos(ev){
+    const r = canvas.getBoundingClientRect();
+    const x = (ev.clientX - r.left);
+    const y = (ev.clientY - r.top);
+    return {x,y};
+  }
+
+  canvas.addEventListener("pointerdown",(ev)=>{
+    ev.preventDefault();
+    canvas.setPointerCapture(ev.pointerId);
+    drawing=true;
+    last=pos(ev);
+  });
+  canvas.addEventListener("pointermove",(ev)=>{
+    if(!drawing) return;
+    ev.preventDefault();
+    const p=pos(ev);
+    ctx.beginPath();
+    ctx.moveTo(last.x,last.y);
+    ctx.lineTo(p.x,p.y);
+    ctx.stroke();
+    last=p;
+    sigHasInk=true;
+  });
+  function end(ev){
+    if(!drawing) return;
+    ev.preventDefault();
+    drawing=false;
+    last=null;
+  }
+  canvas.addEventListener("pointerup", end);
+  canvas.addEventListener("pointercancel", end);
+  canvas.addEventListener("pointerleave", end);
+
+  $("btnSigClear")?.addEventListener("click", ()=>{
+    resize();
+  });
+}
+
+function getSigDataUrl(){
+  const c = $("sigPad");
+  if(!c || !sigHasInk) return "";
+  // exporta menor para economizar espaço
+  const tmp=document.createElement("canvas");
+  const w=520, h=200;
+  tmp.width=w; tmp.height=h;
+  const tctx=tmp.getContext("2d");
+  tctx.fillStyle="#fff"; tctx.fillRect(0,0,w,h);
+  tctx.drawImage(c,0,0,w,h);
+  return tmp.toDataURL("image/png");
+}
+
 /*************** INIT ***************/
 async function init(){
   try{ await rtdbGet("config"); setBadge("ONLINE (RTDB)", true); }
@@ -731,6 +961,7 @@ async function init(){
 window.addEventListener("DOMContentLoaded", ()=>{
   requireAluno();
   init();
+  initSigPad();
 
   $("btnLogout").addEventListener("click", logout);
   $("btnConsultar").addEventListener("click", consultarRE);
